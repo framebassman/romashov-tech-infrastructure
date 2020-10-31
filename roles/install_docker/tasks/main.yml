@@ -1,0 +1,15 @@
+- name: Installing docker
+  apt:
+    pkg: docker.io
+    state: present
+
+- name: Install docker-compose
+  shell: |
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+
+- name: Starting docker service
+  service:
+    name: docker
+    state: started
+    enabled: true
