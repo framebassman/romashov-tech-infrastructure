@@ -27,3 +27,16 @@
 
   - name: Set 'bash' as default shell for d.romashov user
     command: chsh -s /bin/bash d.romashov
+
+  - name: Make sure we have a 'docker' group
+    group:
+      name: docker
+      state: present
+
+  - name: Add d.romshov user to 'docker' group
+    user:
+      name=d.romashov
+      groups=docker
+      append=yes
+      state=present
+      createhome=yes
