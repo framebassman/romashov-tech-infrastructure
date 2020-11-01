@@ -24,3 +24,6 @@
     authorized_key: user=d.romashov key="{{item}}"
     with_file:
       - ../files/id_rsa.pub
+
+  - name: Set 'bash' as default shell for d.romashov user
+    command: chsh -s /bin/bash d.romashov
