@@ -4,3 +4,4 @@
   roles:
   - basic
   - install_docker
+  - create_users
