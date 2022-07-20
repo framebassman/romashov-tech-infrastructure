@@ -3,6 +3,11 @@
     pkg: docker.io
     state: present
 
+- name: Delete existing old docker-compose
+  file:
+    path: "/usr/local/bin/docker-compose"
+    state: absent
+
 - name: Install docker-compose
   shell: |
     mkdir -p /usr/local/lib/docker/cli-plugins
