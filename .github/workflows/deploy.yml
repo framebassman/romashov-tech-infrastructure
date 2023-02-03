@@ -6,6 +6,15 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - uses: webfactory/ssh-agent@v0.5.4
+      # - uses: webfactory/ssh-agent@v0.5.4
+      #   with:
+      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # Required, playbook filepath
+          playbook: server.yml
+          # Optional, directory where playbooks live
+          directory: ./playbooks
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
