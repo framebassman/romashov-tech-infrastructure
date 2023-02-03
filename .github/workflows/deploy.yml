@@ -13,8 +13,8 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Required, playbook filepath
-          playbook: server.yml
-          # Optional, directory where playbooks live
-          directory: ./playbooks
+          playbook: ./playbooks/server.yml
+          # # Optional, directory where playbooks live
+          # directory: ./
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
