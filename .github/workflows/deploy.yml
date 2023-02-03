@@ -1,0 +1,11 @@
+name: Deploy infrastructure to production
+on: [push]
+jobs:
+  Deployment-Task:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
