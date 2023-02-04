@@ -3,5 +3,5 @@
   become: true
   roles:
   - basic
-  - install_docker
+  - ansible-role-docker
   - create_users
