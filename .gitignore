@@ -1,2 +1,5 @@
 .idea
 .vscode
+
+# roles
+roles/ansible-role-docker

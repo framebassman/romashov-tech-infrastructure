@@ -18,3 +18,5 @@ jobs:
           # directory: ./
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
+          # Optional, galaxy requirements filepath
+          requirements: requirements.yml
