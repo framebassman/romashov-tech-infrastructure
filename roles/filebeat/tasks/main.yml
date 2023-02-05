@@ -38,3 +38,4 @@
       path: /tmp/filebeat-oss-7.10.2-amd64.deb
       state: absent
     when: filebeat_check_deb.rc == 1
+# https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.10.2-amd64.deb

@@ -282,3 +282,11 @@ processors:
 #migration.6_to_7.enabled: true
 
 setup.ilm.overwrite: true
+
+# https://discuss.elastic.co/t/filebeat-and-glibc-errors-on-ubuntu-22-04/306653/3
+seccomp:
+  default_action: allow 
+  syscalls:
+  - action: allow
+    names:
+    - rseq
