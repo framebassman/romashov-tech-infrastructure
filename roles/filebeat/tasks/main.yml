@@ -14,6 +14,12 @@
       deb: /tmp/filebeat-oss-7.10.2-amd64.deb
     when: filebeat_check_deb.rc == 1
 
+  - name: Remove all modules after installation
+    file:
+      state: absent
+      path: /etc/filebeat/modules.d/
+    when: filebeat_check_deb.rc == 1
+
   - name: Set up filebeat configuration file
     copy: src=../files/filebeat.yml dest=/etc/filebeat/filebeat.yml
           owner=root group=root mode=0644
