@@ -5,15 +5,13 @@
     failed_when: filebeat_check_deb.rc > 1
     changed_when: filebeat_check_deb.rc == 1
 
-  - name: Download filebeat
-    get_url: 
-      url: https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.10.2-amd64.deb
-      dest: ./filebeat-oss-7.10.2-amd64.deb
+  - name: Copy filebeat-oss package
+    copy: src=../files/filebeat-oss-7.10.2-amd64.deb dest=/tmp/filebeat-oss-7.10.2-amd64.deb
     when: filebeat_check_deb.rc == 1
 
   - name: Install filebeat
     apt:
-      deb: ./filebeat-oss-7.10.2-amd64.deb
+      deb: /tmp/filebeat-oss-7.10.2-amd64.deb
     when: filebeat_check_deb.rc == 1
 
   - name: Set up filebeat configuration file
@@ -31,6 +29,6 @@
 
   - name: Remove deb package
     file:
-      path: ./filebeat-oss-7.10.2-amd64.deb
+      path: /tmp/filebeat-oss-7.10.2-amd64.deb
       state: absent
     when: filebeat_check_deb.rc == 1
