@@ -1,0 +1,41 @@
+---
+  - name: Check if filebeat is installed
+    command: dpkg-query -W filebeat
+    register: filebeat_check_deb
+    failed_when: filebeat_check_deb.rc > 1
+    changed_when: filebeat_check_deb.rc == 1
+
+  - name: Copy filebeat-oss package
+    copy: src=../files/filebeat-oss-7.10.2-amd64.deb dest=/tmp/filebeat-oss-7.10.2-amd64.deb
+    when: filebeat_check_deb.rc == 1
+
+  - name: Install filebeat
+    apt:
+      deb: /tmp/filebeat-oss-7.10.2-amd64.deb
+    when: filebeat_check_deb.rc == 1
+
+  - name: Remove all modules after installation
+    file:
+      state: absent
+      path: /etc/filebeat/modules.d/
+    when: filebeat_check_deb.rc == 1
+
+  - name: Set up filebeat configuration file
+    copy: src=../files/filebeat.yml dest=/etc/filebeat/filebeat.yml
+          owner=root group=root mode=0644
+
+  - name: Setup
+    shell: filebeat setup || true
+    when: filebeat_check_deb.rc == 1
+
+  - name: Restart service filebeat after the new config
+    service:
+      name: filebeat
+      state: restarted
+
+  - name: Remove deb package
+    file:
+      path: /tmp/filebeat-oss-7.10.2-amd64.deb
+      state: absent
+    when: filebeat_check_deb.rc == 1
+# https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.10.2-amd64.deb
