@@ -3,4 +3,3 @@
 
 # roles
 roles/ansible-role-docker
-roles/ansible-role-filebeat
