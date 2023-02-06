@@ -4,6 +4,8 @@ jobs:
   Cleanup-old-indexes:
     runs-on: ubuntu-22.04
     steps:
+      - name: Set FOUR_DAYS
+        run: echo "FOUR_DAYS=$(date -d '-4 day' '+%Y.%d.%m')" >> $GITHUB_ENV
       - name: Cleanup indexes more than 4 days
         run: |
           curl --location \
@@ -17,7 +19,6 @@ jobs:
             }' \
           | json_pp
         env:
-          FOUR_DAYS: $(date -d '-4 day' '+%Y.%d.%m')
           USERNAME: fmtucerc0m
           PASSWORD: g1zbfbj8ly
         shell: bash
