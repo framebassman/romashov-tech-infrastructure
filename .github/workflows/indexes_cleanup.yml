@@ -6,7 +6,6 @@ jobs:
     steps:
       - name: Cleanup indexes more than 4 days
         run: |
-          FOUR_DAYS=$(date -d '-4 day' '+%Y.%d.%m') \
           curl --location \
             --request POST \
             'https://${{env.USERNAME}}:${{env.PASSWORD}}@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-${{env.FOUR_DAYS}}/_delete_by_query' \
@@ -18,6 +17,7 @@ jobs:
             }' \
           | json_pp
         env:
+          FOUR_DAYS: $(date -d '-4 day' '+%Y.%d.%m')
           USERNAME: fmtucerc0m
           PASSWORD: g1zbfbj8ly
         shell: bash
