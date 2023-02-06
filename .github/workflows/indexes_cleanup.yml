@@ -8,7 +8,8 @@ jobs:
         run: |
           curl --location \
             --request POST \
-            'https://$USERNAME:$PIDOR@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-2023.02.02/_delete_by_query' \
+            'https://kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-2023.02.02/_delete_by_query' \
+            --header 'Authorization: Basic $TOKEN' \
             --header 'Content-Type: application/json' \
             --data-raw '{
               "query": {
@@ -16,6 +17,5 @@ jobs:
               }
             }'
         env:
-          USERNAME: fmtucerc0m
-          PIDOR: g1zbfbj8ly
+          TOKEN: Zm10dWNlcmMwbTpnMXpiZmJqOGx5
         shell: bash
