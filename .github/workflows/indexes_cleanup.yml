@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Connect to PostgreSQL
-          run: curl --version
-          env:
-            POSTGRES_HOST: postgres
-            POSTGRES_PORT: 5432
-          shell: bash
+        run: curl --version
+        env:
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
+        shell: bash
