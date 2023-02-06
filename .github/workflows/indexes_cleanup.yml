@@ -2,7 +2,7 @@ name: Cleanup old indexes
 on: [push]
 jobs:
   Cleanup-old-indexes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Connect to PostgreSQL
         run: curl --version
