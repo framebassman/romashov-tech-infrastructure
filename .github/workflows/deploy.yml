@@ -1,21 +1,19 @@
 name: Deploy infrastructure to production
-on: [push]
+on:
+  pull_request:
+    branches:
+      - 'master'
 jobs:
   Deployment-Task:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      # - uses: webfactory/ssh-agent@v0.5.4
-      #   with:
-      #     ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Required, playbook filepath
           playbook: ./playbooks/server.yml
-          # # Optional, directory where playbooks live
-          # directory: ./
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, galaxy requirements filepath

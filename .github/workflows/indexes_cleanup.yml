@@ -1,0 +1,26 @@
+name: Cleanup old indexes
+on:
+  schedule:
+    - cron:  '0 0 * * *'
+jobs:
+  Cleanup-old-indexes:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set FOUR_DAYS
+        run: echo "FOUR_DAYS=$(date -d '-4 day' '+%Y.%d.%m')" >> $GITHUB_ENV
+      - name: Cleanup indexes more than 4 days
+        run: |
+          curl --location \
+            --request POST \
+            'https://${{env.USERNAME}}:${{env.PASSWORD}}@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-${{env.FOUR_DAYS}}/_delete_by_query' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+              "query": {
+                "match_all": {}
+              }
+            }' \
+          | json_pp
+        env:
+          USERNAME: fmtucerc0m
+          PASSWORD: g1zbfbj8ly
+        shell: bash
