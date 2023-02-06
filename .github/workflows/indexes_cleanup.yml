@@ -4,9 +4,10 @@ jobs:
   Cleanup-old-indexes:
     runs-on: ubuntu-22.04
     steps:
-      - name: Connect to PostgreSQL
-        run: curl --version
+      - name: Cleanup indexes more than 4 days
+        run: curl $URL
         env:
           POSTGRES_HOST: postgres
           POSTGRES_PORT: 5432
+          URL: https://ya.ru
         shell: bash
