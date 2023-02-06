@@ -9,7 +9,7 @@ jobs:
           fourDays=$(date -d '-4 day' '+%Y.%d.%m') \
           curl --location \
             --request POST \
-            'https://${{env.USERNAME}}:${{env.PASSWORD}}@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-${{fourDays}}/_delete_by_query' \
+            'https://${{env.USERNAME}}:${{env.PASSWORD}}@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-$fourDays/_delete_by_query' \
             --header 'Content-Type: application/json' \
             --data-raw '{
               "query": {
