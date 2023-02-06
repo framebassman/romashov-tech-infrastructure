@@ -1,5 +1,7 @@
 name: Cleanup old indexes
-on: [push]
+on:
+  schedule:
+    - cron:  '0 0 * * *'
 jobs:
   Cleanup-old-indexes:
     runs-on: ubuntu-22.04
