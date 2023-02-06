@@ -5,9 +5,17 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Cleanup indexes more than 4 days
-        run: curl $URL
+        run: |
+          curl --location
+            --request POST
+            'https://$USERNAME:$PASSWORD@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-2023.02.02/_delete_by_query' \
+            --header 'Content-Type: application/json' \
+            --data-raw '{
+              "query": {
+                "match_all": {}
+              }
+            }'
         env:
-          POSTGRES_HOST: postgres
-          POSTGRES_PORT: 5432
-          URL: https://ya.ru
+          USERNAME: fmtucerc0m
+          PASSWORD: g1zbfbj8ly
         shell: bash
