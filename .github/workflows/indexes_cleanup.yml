@@ -5,8 +5,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Cleanup indexes more than 4 days
-        run: |
-          curl --location \
+        run: curl --location \
             --request POST \
             'https://kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-2023.02.02/_delete_by_query' \
             --header "Authorization: Basic ${TOKEN}" \
