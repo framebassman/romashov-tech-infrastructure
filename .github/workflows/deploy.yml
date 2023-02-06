@@ -1,8 +1,8 @@
 name: Deploy infrastructure to production
 on:
   pull_request:
-  branches:
-    - 'master'
+    branches:
+      - 'master'
 jobs:
   Deployment-Task:
     runs-on: ubuntu-latest
