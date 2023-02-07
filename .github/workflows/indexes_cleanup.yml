@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Set FOUR_DAYS
-        run: echo "FOUR_DAYS=$(date -d '-4 day' '+%Y.%d.%m')" >> $GITHUB_ENV
+        run: echo "FOUR_DAYS=$(date -d '-4 day' '+%Y.%m.%d')" >> $GITHUB_ENV
       - name: Cleanup indexes more than 4 days
         run: |
           curl --location \
