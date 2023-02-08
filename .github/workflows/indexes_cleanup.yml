@@ -24,3 +24,14 @@ jobs:
           USERNAME: fmtucerc0m
           PASSWORD: g1zbfbj8ly
         shell: bash
+      - name: Cleanup indexes more than 4 days
+        run: |
+          curl --location \
+            --request DELETE \
+            'https://${{env.USERNAME}}:${{env.PASSWORD}}@kolenka-inc-4135333449.eu-central-1.bonsaisearch.net/filebeat-7.10.2-${{env.FOUR_DAYS}}' \
+            --header 'Content-Type: application/json' \
+          | json_pp
+        env:
+          USERNAME: fmtucerc0m
+          PASSWORD: g1zbfbj8ly
+        shell: bash
