@@ -14,10 +14,8 @@
       deb: "/tmp/filebeat-oss-7.10.2-{{apt_arch}}.deb"
     when: filebeat_check_deb.rc == 1
 
-  - name: Remove all modules after installation
-    file:
-      state: absent
-      path: /etc/filebeat/modules.d/
+  - name: Enable traefik module
+    command: filebeat modules enable traefik 
     when: filebeat_check_deb.rc == 1
 
   - name: Set up filebeat configuration file
