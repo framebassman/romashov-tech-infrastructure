@@ -8,4 +8,4 @@
 
     # Set custom paths for the log files. If left empty,
     # Filebeat will choose the paths depending on your OS.
-    var.paths: ["/home/d.romashov/azagent/_work/2/s/services/proxy/logs/access.log*", "/home/d.romashov/azagent/_work/2/s/services/proxy/logs/traefik.log*"]
+    var.paths: ["/home/d.romashov/azagent/_work/2/s/services/proxy/logs/access.log*"]
