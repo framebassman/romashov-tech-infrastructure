@@ -18,6 +18,10 @@
     command: filebeat modules enable traefik 
     when: filebeat_check_deb.rc == 1
 
+  - name: Set up traefik module configuration file
+    copy: src=../files/traefik.yml dest=/etc/filebeat/modules.d/traefik.yml
+          owner=root group=root mode=0644
+
   - name: Set up filebeat configuration file
     copy: src=../files/filebeat.yml dest=/etc/filebeat/filebeat.yml
           owner=root group=root mode=0644
