@@ -6,12 +6,12 @@
     changed_when: filebeat_check_deb.rc == 1
 
   - name: Copy filebeat-oss package
-    copy: src=../files/filebeat-oss-7.10.2-amd64.deb dest=/tmp/filebeat-oss-7.10.2-amd64.deb
+    copy: src="../files/filebeat-oss-7.10.2-{{apt_arch}}.deb" dest="/tmp/filebeat-oss-7.10.2-{{apt_arch}}.deb"
     when: filebeat_check_deb.rc == 1
 
   - name: Install filebeat
     apt:
-      deb: /tmp/filebeat-oss-7.10.2-amd64.deb
+      deb: "/tmp/filebeat-oss-7.10.2-{{apt_arch}}.deb"
     when: filebeat_check_deb.rc == 1
 
   - name: Remove all modules after installation
@@ -35,7 +35,7 @@
 
   - name: Remove deb package
     file:
-      path: /tmp/filebeat-oss-7.10.2-amd64.deb
+      path: "/tmp/filebeat-oss-7.10.2-{{apt_arch}}.deb"
       state: absent
     when: filebeat_check_deb.rc == 1
 # https://artifacts.elastic.co/downloads/beats/filebeat/filebeat-oss-7.10.2-amd64.deb
