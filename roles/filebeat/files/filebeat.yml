@@ -107,6 +107,21 @@ filebeat.config.modules:
   # Period on which files under path should be checked for changes
   #reload.period: 10s
 
+filebeat.autodiscover:
+  providers:
+    - type: docker
+      templates:
+        - condition:
+            contains:
+              docker.container.image: traefik
+          config:
+            - module: traefik
+              access:
+                input:
+                  type: container
+                  paths:
+                    - /home/d.romashov/azagent/_work/2/s/services/proxy/logs/access.json*
+
 # ======================= Elasticsearch template setting =======================
 
 setup.template.settings:
