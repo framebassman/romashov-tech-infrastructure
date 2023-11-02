@@ -15,7 +15,7 @@
     docker_compose_package: docker-compose-plugin
     docker_compose_package_state: present
     docker_compose_version: 'v2.21.0'
-    docker_compose_arch: {{ ansible_architecture }}
+    docker_compose_arch: "{{ ansible_architecture }}"
     docker_compose_path: /usr/local/bin/docker-compose
     filebeat_version: 7.10.2
     filebeat_create_config: false
