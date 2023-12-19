@@ -1,5 +1,10 @@
 ---
-  - name: Installing additional software
+  - name: Prepare before docker installation
+    command: |
+      rm /etc/apt/keyrings/docker.gpg
+      rm /etc/apt/sources.list.d/docker.list
+
+- name: Installing additional software
     apt:
       name: "{{ packages }}"
       update_cache: yes
@@ -17,8 +22,3 @@
 
   - name: Removing standard bashrc
     shell: creates=/root/.bashrc_backup mv /root/.bashrc /root/.bashrc_backup
-
-  - name: Prepare before docker installation
-    command: |
-      rm /etc/apt/keyrings/docker.gpg
-      rm /etc/apt/sources.list.d/docker.list
