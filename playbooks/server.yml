@@ -21,6 +21,6 @@
     filebeat_create_config: false
   roles:
   - basic
-  # - ansible-role-docker
+  - ansible-role-docker
   - filebeat
   - create_users
