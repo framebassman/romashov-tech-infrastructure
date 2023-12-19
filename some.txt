@@ -4,3 +4,5 @@ mkdir azagent;cd azagent;curl -fkSL -o vstsagent.tar.gz https://vstsagentpackage
 
 :154        Failed to connect to backoff(elasticsearch(https://kolenka-inc-4135333449.eu-central-1.bonsaisearch.net:443)): Connection marked as failed because the onConnect callback failed: Filebeat requires the default distribution of Elasticsearch. Please update to the default distribution of Elasticsearch for full access to a
 ll free features, or switch to the OSS distribution of Filebeat.
+
+https://www.elastic.co/guide/en/beats/filebeat/7.10/filebeat-input-docker.html
