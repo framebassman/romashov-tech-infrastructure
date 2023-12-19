@@ -4,7 +4,7 @@
       rm /etc/apt/keyrings/docker.gpg
       rm /etc/apt/sources.list.d/docker.list
 
-- name: Installing additional software
+  - name: Installing additional software
     apt:
       name: "{{ packages }}"
       update_cache: yes
