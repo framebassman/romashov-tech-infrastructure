@@ -1,5 +1,5 @@
 ---
-- hosts: all
+- hosts: arm
   become: true
   vars:
     apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
