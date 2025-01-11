@@ -6,8 +6,13 @@
     filebeat_version: 7.10.2
     filebeat_create_config: false
   roles:
-  # - basic
-  # - create-users
-  # - ansible-role-docker
+  - basic
+  - create-users
+  - ansible-role-docker
   # - filebeat
+
+- hosts: all
+  become: true
+  become_user: d.romashov
+  roles:
   - romashov-tech-deployment

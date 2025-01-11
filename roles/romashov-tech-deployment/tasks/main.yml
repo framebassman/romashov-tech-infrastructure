@@ -1,0 +1,46 @@
+---
+  - name: Set up ssh key for git
+    copy:
+      src: ../files/ssh-config
+      dest: /home/d.romashov/.ssh/config
+      owner: d.romashov
+      group: wheel
+      mode: 0644
+      force: no
+
+  - name: Check if romashov-tech repo exists
+    stat:
+      path: /home/d.romashov/romashov-tech
+    register: repo_exists_check
+
+  - name: Clone romashov-tech repo
+    ansible.builtin.git:
+      repo: git@github.com:framebassman/romashov-tech.git
+      dest: /home/d.romashov/romashov-tech
+      single_branch: yes
+      version: master
+      accept_hostkey: true
+    when: not repo_exists_check.stat.exists
+
+  - name: Pull last release version
+    shell: git checkout master && git pull
+    args:
+      chdir: /home/d.romashov/romashov-tech
+
+  - name: Stop VPN
+    shell: make stop-prod-vpn
+    args:
+      chdir: /home/d.romashov/romashov-tech
+
+  - name: Start VPN
+    shell: make start-prod-vpn
+    args:
+      chdir: /home/d.romashov/romashov-tech
+
+  - name: Cleanup docker images first round
+    shell: make docker-cleanup -i
+    args:
+      chdir: /home/d.romashov/romashov-tech
+
+  - name: Cleanup docker images second round
+    shell: docker image prune --all --force
