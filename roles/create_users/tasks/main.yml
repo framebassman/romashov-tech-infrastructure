@@ -20,10 +20,20 @@
       state=present
       createhome=yes
 
-  - name: Set up authorized keys for the deployer user
+  - name: Set up komplukter authorized key for the deployer user
     authorized_key: user=d.romashov key="{{item}}"
     with_file:
-      - ../files/id_rsa.pub
+      - ../files/komplukter.id_rsa.pub
+
+  - name: Set up pixel6 authorized key for the deployer user
+    authorized_key: user=d.romashov key="{{item}}"
+    with_file:
+      - ../files/pixel6.id_rsa.pub
+
+  - name: Set up workstation-Vostro-15-3510 authorized key for the deployer user
+    authorized_key: user=d.romashov key="{{item}}"
+    with_file:
+      - ../files/workstation-Vostro-15-3510.id_rsa.pub
 
   - name: Set 'bash' as default shell for d.romashov user
     command: chsh -s /bin/bash d.romashov
