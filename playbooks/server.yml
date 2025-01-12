@@ -1,18 +1,28 @@
 ---
-- hosts: all
-  become: true
-  vars:
-    apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
-    filebeat_version: 7.10.2
-    filebeat_create_config: false
-  roles:
-  - basic
-  - create-users
-  - ansible-role-docker
-  # - filebeat
+# - hosts: all
+#   become: true
+#   vars:
+#     apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+#     filebeat_version: 7.10.2
+#     filebeat_create_config: false
+#   roles:
+#   - basic
+#   - create-users
+#   - ansible-role-docker
+#   # - filebeat
 
 - hosts: all
   become: true
   become_user: d.romashov
+  vars:
+    application: vpn
+  roles:
+  - romashov-tech-deployment
+
+- hosts: main
+  become: true
+  become_user: d.romashov
+  vars:
+    application: vault
   roles:
   - romashov-tech-deployment

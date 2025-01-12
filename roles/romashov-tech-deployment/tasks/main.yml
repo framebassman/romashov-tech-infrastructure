@@ -27,13 +27,13 @@
     args:
       chdir: /home/d.romashov/romashov-tech
 
-  - name: Stop VPN
-    shell: make stop-prod-vpn
+  - name: Stop Deployment
+    shell: "make stop-prod-{{ application }}"
     args:
       chdir: /home/d.romashov/romashov-tech
 
-  - name: Start VPN
-    shell: make start-prod-vpn
+  - name: Start Deployment
+    shell: "make start-prod-{{ application }}"
     args:
       chdir: /home/d.romashov/romashov-tech
 
