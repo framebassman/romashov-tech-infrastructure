@@ -5,6 +5,10 @@ infrastructure:
 	make requirements
 	ansible-playbook -K playbooks/infrastructure.yml
 
-deploy:
+deploy-vpn:
 	make requirements
-	ansible-playbook -K playbooks/deploy.yml
+	ansible-playbook -K playbooks/deploy-vpn.yml
+
+deploy-vault:
+	make requirements
+	ansible-playbook -K playbooks/deploy-vault.yml
