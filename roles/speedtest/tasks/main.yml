@@ -6,18 +6,18 @@
     changed_when: speedtest_check_deb.rc == 1
 
   - name: Download speedtest deb package
-    shell: "wget --content-disposition 'https://packagecloud.io/ookla/speedtest-cli/packages/ubuntu/jammy/speedtest_1.2.0.84-1.ea6b6773cf_{{apt_arch}}.deb/download.deb?distro_version_id=237'"
+    shell: "wget --content-disposition 'https://packagecloud.io/ookla/speedtest-cli/packages/ubuntu/jammy/{{ package_name }}/download.deb?distro_version_id=237'"
     args:
       chdir: /tmp
     when: speedtest_check_deb.rc == 1
 
   - name: Install speedtest
     apt:
-      deb: "/tmp/speedtest_1.2.0.84-1.ea6b6773cf_{{apt_arch}}.deb"
+      deb: "/tmp/{{ package_name }}"
     when: speedtest_check_deb.rc == 1
 
   - name: Remove deb package
     file:
-      path: "/tmp/filebeat-oss-7.10.2-{{apt_arch}}.deb"
+      path: "/tmp/{{ package_name }}"
       state: absent
     when: speedtest_check_deb.rc == 1
