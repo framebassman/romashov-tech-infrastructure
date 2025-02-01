@@ -7,4 +7,4 @@ infrastructure:
 
 deploy:
 	make requirements
-	ansible-playbook -K playbooks/infrastructure.yml
+	ansible-playbook -K playbooks/deploy.yml
