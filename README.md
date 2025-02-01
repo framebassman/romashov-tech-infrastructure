@@ -1,4 +1,4 @@
 # How to use
 
 - Install ansible
-- `make`
+- `make infrastructure`
