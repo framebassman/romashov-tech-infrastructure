@@ -9,3 +9,9 @@
   - create-users
   - ansible-role-docker
   # - filebeat
+
+- hosts: russia
+  vars:
+    apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+  roles:
+  - speedtest

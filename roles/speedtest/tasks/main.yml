@@ -1,0 +1,23 @@
+---
+  - name: Check if speedtest is installed
+    command: dpkg-query -W speedtest
+    register: speedtest_check_deb
+    failed_when: speedtest_check_deb.rc > 1
+    changed_when: speedtest_check_deb.rc == 1
+
+  - name: Download speedtest deb package
+    shell: "wget --content-disposition 'https://packagecloud.io/ookla/speedtest-cli/packages/ubuntu/jammy/speedtest_1.2.0.84-1.ea6b6773cf_{{apt_arch}}.deb/download.deb?distro_version_id=237'"
+    args:
+      chdir: /tmp
+    when: speedtest_check_deb.rc == 1
+
+  - name: Install speedtest
+    apt:
+      deb: "/tmp/speedtest_1.2.0.84-1.ea6b6773cf_{{apt_arch}}.deb"
+    when: speedtest_check_deb.rc == 1
+
+  - name: Remove deb package
+    file:
+      path: "/tmp/filebeat-oss-7.10.2-{{apt_arch}}.deb"
+      state: absent
+    when: speedtest_check_deb.rc == 1
