@@ -13,7 +13,7 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Required, playbook filepath
-          playbook: ./playbooks/server.yml
+          playbook: ./playbooks/infrastructure.yml
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, galaxy requirements filepath
