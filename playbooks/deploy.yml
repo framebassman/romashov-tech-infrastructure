@@ -1,0 +1,16 @@
+---
+- hosts: all
+  become: true
+  become_user: d.romashov
+  vars:
+    application: vpn
+  roles:
+  - romashov-tech-deployment
+
+- hosts: main
+  become: true
+  become_user: d.romashov
+  vars:
+    application: vault
+  roles:
+  - romashov-tech-deployment
