@@ -23,7 +23,7 @@
     when: not repo_exists_check.stat.exists
 
   - name: Pull last release version
-    shell: git checkout master && git pull
+    shell: git reset --hard && git checkout master && git pull
     args:
       chdir: /home/d.romashov/romashov-tech
 
@@ -37,10 +37,10 @@
     args:
       chdir: /home/d.romashov/romashov-tech
 
-  - name: Cleanup docker images first round
+  - name: Cleanup docker images
     shell: make docker-cleanup -i
     args:
       chdir: /home/d.romashov/romashov-tech
 
-  - name: Cleanup docker images second round
+  - name: Remove unused docker images
     shell: docker image prune --all --force
