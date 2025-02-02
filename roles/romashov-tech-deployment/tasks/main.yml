@@ -17,15 +17,21 @@
     ansible.builtin.git:
       repo: git@github.com:framebassman/romashov-tech.git
       dest: /home/d.romashov/romashov-tech
-      single_branch: yes
+      single_branch: no
       version: master
-      accept_hostkey: true
+      accept_hostkey: yes
     when: not repo_exists_check.stat.exists
 
-  - name: Pull last release version
-    shell: git reset --hard && git checkout master && git pull
-    args:
-      chdir: /home/d.romashov/romashov-tech
+  - name: Reset all changes
+    ansible.builtin.git:
+      repo: git@github.com:framebassman/romashov-tech.git
+      dest: /home/d.romashov/romashov-tech
+      version: master
+      update: yes
+      force: yes
+      clone: no
+      single_branch: no
+      accept_hostkey: yes
 
   - name: Stop Deployment
     shell: "make stop-prod-{{ application }}"
