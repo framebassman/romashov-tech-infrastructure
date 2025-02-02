@@ -1,5 +1,5 @@
 ---
-- hosts: main
+- hosts: vpn
   become: true
   become_user: d.romashov
   vars:
