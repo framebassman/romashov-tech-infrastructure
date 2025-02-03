@@ -21,3 +21,15 @@
       path: "/tmp/{{ package_name }}"
       state: absent
     when: speedtest_check_deb.rc == 1
+
+  - name: Check if speedtest is installed
+    command: dpkg-query -W openconnect
+    register: openconnect_check_deb
+    failed_when: openconnect_check_deb.rc > 1
+    changed_when: openconnect_check_deb.rc == 1
+
+  - name: Installing Openconnect
+    apt:
+      name: openconnect
+      update_cache: yes
+    when: openconnect_check_deb.rc == 1
