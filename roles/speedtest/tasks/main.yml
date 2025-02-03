@@ -1,17 +1,17 @@
 ---
-  - name: Check if speedtest is installed
+  - name: Check if Speedtest is installed
     command: dpkg-query -W speedtest
     register: speedtest_check_deb
     failed_when: speedtest_check_deb.rc > 1
     changed_when: speedtest_check_deb.rc == 1
 
-  - name: Download speedtest deb package
+  - name: Download Speedtest deb package
     shell: "wget --content-disposition 'https://packagecloud.io/ookla/speedtest-cli/packages/ubuntu/jammy/{{ package_name }}/download.deb?distro_version_id=237'"
     args:
       chdir: /tmp
     when: speedtest_check_deb.rc == 1
 
-  - name: Install speedtest
+  - name: Install Speedtest
     apt:
       deb: "/tmp/{{ package_name }}"
     when: speedtest_check_deb.rc == 1
@@ -22,7 +22,7 @@
       state: absent
     when: speedtest_check_deb.rc == 1
 
-  - name: Check if speedtest is installed
+  - name: Check if Openconnect is installed
     command: dpkg-query -W openconnect
     register: openconnect_check_deb
     failed_when: openconnect_check_deb.rc > 1
