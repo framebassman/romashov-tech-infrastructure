@@ -38,7 +38,7 @@
     command: ./esst.sh uninstall
     args:
       chdir: tests/speed/es_speedtest_cli/
-      creates: /opt/esst
+      removes: /opt/esst
       
   - name: Install new version of cron job
     command: ./esst.sh install
