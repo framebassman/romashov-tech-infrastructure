@@ -4,5 +4,6 @@
   become_user: d.romashov
   vars:
     application: vault
+    project_path: "/home/d.romashov/romashov-tech"
   roles:
   - romashov-tech-deployment

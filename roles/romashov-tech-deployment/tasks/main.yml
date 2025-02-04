@@ -10,13 +10,13 @@
 
   - name: Check if romashov-tech repo exists
     stat:
-      path: /home/d.romashov/romashov-tech
+      path: "{{ project_path }}"
     register: repo_exists_check
 
   - name: Clone romashov-tech repo
     ansible.builtin.git:
       repo: git@github.com:framebassman/romashov-tech.git
-      dest: /home/d.romashov/romashov-tech
+      dest: "{{ project_path }}"
       single_branch: no
       version: master
       accept_hostkey: yes
@@ -25,7 +25,7 @@
   - name: Reset all changes
     ansible.builtin.git:
       repo: git@github.com:framebassman/romashov-tech.git
-      dest: /home/d.romashov/romashov-tech
+      dest: "{{ project_path }}"
       version: master
       update: yes
       force: yes
@@ -36,17 +36,17 @@
   - name: Stop Deployment
     shell: "make stop-prod-{{ application }}"
     args:
-      chdir: /home/d.romashov/romashov-tech
+      chdir: "{{ project_path }}"
 
   - name: Start Deployment
     shell: "make start-prod-{{ application }}"
     args:
-      chdir: /home/d.romashov/romashov-tech
+      chdir: "{{ project_path }}"
 
   - name: Cleanup docker images
     shell: make docker-cleanup -i
     args:
-      chdir: /home/d.romashov/romashov-tech
+      chdir: "{{ project_path }}"
 
   - name: Remove unused docker images
     shell: docker image prune --all --force

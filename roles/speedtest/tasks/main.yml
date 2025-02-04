@@ -37,11 +37,11 @@
   - name: Uninstall previous version of cron job
     command: ./esst.sh uninstall
     args:
-      chdir: tests/speed/es_speedtest_cli/
+      chdir: "{{ project_path }}/tests/speed/es_speedtest_cli/"
       removes: /opt/esst
       
   - name: Install new version of cron job
     command: ./esst.sh install
     args:
-      chdir: tests/speed/es_speedtest_cli/
+      chdir: "{{ project_path }}/tests/speed/es_speedtest_cli/"
       creates: /opt/esst
