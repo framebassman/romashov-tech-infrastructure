@@ -9,10 +9,3 @@
   - create-users
   - ansible-role-docker
   # - filebeat
-
-- hosts: russia
-  vars:
-    package_name: "speedtest_1.2.0.84-1.ea6b6773cf_amd64.deb"
-    project_path: "/home/d.romashov/romashov-tech"
-  roles:
-  - speedtest
