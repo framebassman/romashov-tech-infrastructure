@@ -39,7 +39,7 @@
     args:
       chdir: "{{ project_path }}/tests/speed/es_speedtest_cli/"
       removes: /opt/esst
-      
+
   - name: Install new version of cron job
     command: ./esst.sh install
     args:
