@@ -11,4 +11,5 @@ deploy-vpn:
 
 deploy-vault:
 	make requirements
-	ansible-playbook playbooks/deploy-vault.yml
+	ansible-playbook playbooks/deploy-vault.yml \
+		--extra-vars "BUILD_BUILDNUMBER=$$BUILD_BUILDNUMBER"

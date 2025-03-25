@@ -39,7 +39,7 @@
       chdir: "{{ project_path }}"
 
   - name: Start Deployment
-    shell: "make start-prod-{{ application }}"
+    shell: "BUILD_BUILDNUMBER={{ BUILD_BUILDNUMBER }} make start-prod-{{ application }}"
     args:
       chdir: "{{ project_path }}"
 
