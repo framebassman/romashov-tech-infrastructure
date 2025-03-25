@@ -1,0 +1,9 @@
+---
+- hosts: russia
+  become: true
+  become_user: d.romashov
+  vars:
+    application: web
+    project_path: "/home/d.romashov/romashov-tech"
+  roles:
+  - romashov-tech-deployment
