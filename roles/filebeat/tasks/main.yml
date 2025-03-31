@@ -28,6 +28,11 @@
     shell: filebeat setup || true
     when: filebeat_check_deb.rc == 1
 
+  - name: Stop the filebeat service
+    service:
+      name: filebeat
+      state: stopped
+
   # - name: Restart service filebeat after the new config
   #   service:
   #     name: filebeat
