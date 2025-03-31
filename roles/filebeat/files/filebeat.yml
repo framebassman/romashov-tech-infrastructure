@@ -106,7 +106,7 @@ filebeat.inputs:
 
 - type: log
   paths:
-    - /home/d.romashov/azagent/_work/2/s/services/proxy/logs/*.json
+    - /home/d.romashov/romashov-tech/services/proxy/logs/*.json
   json.keys_under_root: true
   json.add_error_key: true
   fields_under_root: true

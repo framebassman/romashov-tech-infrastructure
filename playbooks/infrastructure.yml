@@ -8,4 +8,4 @@
   - basic
   - create-users
   - ansible-role-docker
-  # - filebeat
+  - filebeat
