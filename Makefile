@@ -15,5 +15,4 @@ deploy-vault:
 
 deploy-web:
 	make requirements
-	ansible-playbook playbooks/deploy-web.yml \
-		--extra-vars "BUILD_BUILDNUMBER=$$BUILD_BUILDNUMBER"
+	ansible-playbook playbooks/deploy-web.yml
