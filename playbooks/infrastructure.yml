@@ -1,5 +1,5 @@
 ---
-- hosts: estonian
+- hosts: all
   vars:
     apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
     filebeat_version: 7.10.2
