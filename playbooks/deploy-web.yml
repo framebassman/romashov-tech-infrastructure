@@ -1,5 +1,5 @@
 ---
-- hosts: russia
+- hosts: russian
   become: true
   become_user: d.romashov
   vars:
