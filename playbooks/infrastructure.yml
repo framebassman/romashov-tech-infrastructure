@@ -7,6 +7,6 @@
   roles:
   - basic
   - create-users
-  - ssh-configuration
   - ansible-role-docker
   - filebeat
+  - ssh-configuration
