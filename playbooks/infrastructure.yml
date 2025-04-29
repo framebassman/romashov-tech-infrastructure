@@ -9,4 +9,3 @@
   - create-users
   - ansible-role-docker
   - filebeat
-  - ssh-configuration

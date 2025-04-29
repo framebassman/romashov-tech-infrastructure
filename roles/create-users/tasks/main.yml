@@ -43,3 +43,15 @@
       append=yes
       state=present
       createhome=yes
+
+  - name: Configure sshd
+    lineinfile:
+      path: "/etc/ssh/sshd_config"
+      regex: "^(#)?{{item.key}}"
+      line: "{{item.key}} {{item.value}}"
+      state: present
+    loop:
+      - { key: "PermitRootLogin", value: "yes" }
+      - { key: "PasswordAuthentication", value: "no" } 
+    notify:
+      - restart sshd
