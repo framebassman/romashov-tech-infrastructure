@@ -33,26 +33,19 @@
       single_branch: no
       accept_hostkey: yes
 
-  - name: Determine latest Docker Hub release
-    become: false
-    uri:
-      url: "https://hub.docker.com/v2/repositories/framebassman/romashovtech-web/tags?page=1&page_size=1"
-      body_format: json
-    register: _dockerhub_release
-    until: _dockerhub_release.status == 200
-    retries: 5
-
-  - name: Set romashov-tech-web_version
-    set_fact:
-      romashov_tech_web_version: "{{ _dockerhub_release.json.results[0].name }}"
-
   - name: Stop Deployment
     shell: "make stop-prod-{{ application }}"
     args:
       chdir: "{{ project_path }}"
 
+  - name: Stop old web service
+    shell: |
+      docker stop web
+    args:
+      chdir: "{{ project_path }}"
+
   - name: Start Deployment
-    shell: "BUILD_BUILDNUMBER={{ romashov_tech_web_version }} make start-prod-{{ application }}"
+    shell: "make start-prod-{{ application }}"
     args:
       chdir: "{{ project_path }}"
 
