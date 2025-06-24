@@ -3,7 +3,7 @@
   become: true
   become_user: d.romashov
   vars:
-    application: web
+    application: proxy
     project_path: "/home/d.romashov/romashov-tech"
   roles:
   - romashov-tech-deployment
