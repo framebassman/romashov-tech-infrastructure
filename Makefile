@@ -13,6 +13,6 @@ deploy-vault:
 	make requirements
 	ansible-playbook playbooks/deploy-vault.yml
 
-deploy-web:
+deploy-proxy:
 	make requirements
-	ansible-playbook playbooks/deploy-web.yml
+	ansible-playbook playbooks/deploy-proxy.yml
