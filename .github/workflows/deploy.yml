@@ -6,6 +6,7 @@ on:
 jobs:
   deploy-terraform-modules:
     runs-on: ubuntu-22.04
+    working-directory: terraform
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
