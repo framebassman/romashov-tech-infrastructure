@@ -10,11 +10,13 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
       - name: Run playbook
-        uses: dawidd6/action-ansible-playbook@v2
+        uses: dawidd6/action-ansible-playbook@v4
         with:
+            # Optional, directory where playbooks live
+          directory: ./ansible
           # Required, playbook filepath
-          playbook: ./ansible/playbooks/infrastructure.yml
+          playbook: ./playbooks/infrastructure.yml
           # Optional, SSH private key
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, galaxy requirements filepath
-          requirements: ./ansible/requirements.yml
+          requirements: ./requirements.yml
