@@ -1,18 +1,22 @@
 requirements:
-	ansible-galaxy install --role-file requirements.yml
+	ansible-galaxy install --role-file ansible/requirements.yml
 
 infrastructure:
 	make requirements
-	ansible-playbook playbooks/infrastructure.yml
+	cd ansible && \
+		ansible-playbook --roles-path ansible playbooks/infrastructure.yml
 
 deploy-vpn:
 	make requirements
-	ansible-playbook playbooks/deploy-vpn.yml
+	cd ansible && \
+		ansible-playbook playbooks/deploy-vpn.yml
 
 deploy-vault:
 	make requirements
-	ansible-playbook playbooks/deploy-vault.yml
+	cd ansible && \
+		ansible-playbook playbooks/deploy-vault.yml
 
 deploy-proxy:
 	make requirements
-	ansible-playbook playbooks/deploy-proxy.yml
+	cd ansible && \
+		ansible-playbook playbooks/deploy-proxy.yml
