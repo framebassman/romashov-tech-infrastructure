@@ -10,6 +10,9 @@ apply:
 pull:
 	terraform state pull
 
+fmt:
+	terraform fmt
+
 import:
 	terraform import module.mysql.aiven_mysql.this romashov-tech/kolenka-inc-mysql
 	terraform import module.mysql.aiven_mysql_database.defaultdb romashov-tech/kolenka-inc-mysql/defaultdb

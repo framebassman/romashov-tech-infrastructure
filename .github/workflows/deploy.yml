@@ -24,7 +24,7 @@ jobs:
           terraform_version: "1.5.7"
       - run: terraform init -backend-config=backend.conf
       - run: terraform plan
-      # - run: terraform apply -auto-approve
+      - run: terraform apply -auto-approve
 
   deploy-ansible-playbooks:
     runs-on: ubuntu-22.04
