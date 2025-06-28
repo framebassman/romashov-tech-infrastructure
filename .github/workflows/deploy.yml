@@ -4,11 +4,31 @@ on:
     branches:
       - 'master'
 jobs:
-  deploy-ansible-playbooks:
+  deploy-terraform-modules:
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+      - name: Populate secrets
+        run: |
+          echo $BACKEND_CONF_BASE64 | base64 --decode > backend.conf
+          echo $TERRAFORM_TFVARS_BASE64 | base64 --decode > terraform.tfvars
+        env:
+          BACKEND_CONF_BASE64: ${{ secrets.BACKEND_CONF_BASE64 }}
+          TERRAFORM_TFVARS_BASE64: ${{ secrets.TERRAFORM_TFVARS_BASE64 }}
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.5.7"
+      - run: terraform init -backend-config=backend.conf
+      - run: terraform plan
+      - run: terraform apply -auto-approve
+
+  deploy-ansible-playbooks:
+    runs-on: ubuntu-22.04
+    needs: deploy-terraform-modules
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v4
         with:
