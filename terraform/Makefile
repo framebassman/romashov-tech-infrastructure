@@ -1,5 +1,6 @@
 init:
-	terraform init -backend-config=backend.conf
+	terraform init \
+	 -backend-config=backend.conf
 
 plan:
 	terraform plan
