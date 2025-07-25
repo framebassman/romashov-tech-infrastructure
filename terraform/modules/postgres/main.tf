@@ -27,20 +27,6 @@ resource "aiven_pg_user" "avnadmin" {
   pg_allow_replication = true
 }
 
-resource "aiven_pg_database" "foodikal_production" {
-  project       = aiven_pg.this.project
-  service_name  = aiven_pg.this.service_name
-  database_name = "foodikal-production"
-}
-
-resource "aiven_pg_user" "foodikal_user" {
-  project              = aiven_pg.this.project
-  service_name         = aiven_pg.this.service_name
-  username             = "foodikal-user"
-  password             = var.pg_foodikal_user_password
-  pg_allow_replication = false
-}
-
 resource "aiven_pg_database" "inventory_production" {
   project       = aiven_pg.this.project
   service_name  = aiven_pg.this.service_name
