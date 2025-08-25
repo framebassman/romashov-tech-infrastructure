@@ -3,7 +3,7 @@ requirements:
 
 infrastructure:
 	make requirements
-	ansible-playbook --roles-path ansible playbooks/infrastructure.yml
+	ansible-playbook playbooks/infrastructure.yml
 
 deploy-vpn:
 	make requirements
