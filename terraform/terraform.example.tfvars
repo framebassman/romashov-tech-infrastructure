@@ -9,3 +9,5 @@ pg_vault_user_password     = ""
 
 mysql_avnadmin_user_password   = ""
 mysql_monitoring_user_password = ""
+
+oci_private_key = ""
