@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">=0.13"
+  required_version = ">=1.14"
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
@@ -7,7 +7,7 @@ terraform {
     }
     oci = {
       source  = "oracle/oci"
-      version = "~> 5"
+      version = "~> 8"
     }
   }
 

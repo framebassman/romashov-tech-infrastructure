@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    oci = {
+      source  = "oracle/oci"
+      version = "~> 8"
+    }
+  }
+}
+
 # Данные для подстановки (AD и образ), если image_id не задан
 data "oci_identity_availability_domains" "ads" {
   compartment_id = var.compartment_id
