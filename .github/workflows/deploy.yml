@@ -5,7 +5,7 @@ on:
       - 'master'
 jobs:
   deploy-terraform-modules:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: terraform
@@ -21,7 +21,7 @@ jobs:
           TERRAFORM_TFVARS_BASE64: ${{ secrets.TERRAFORM_TFVARS_BASE64 }}
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.12.2"
+          terraform_version: "1.14.6"
       - run: terraform init -backend-config=backend.conf
       - run: terraform plan
       - run: terraform apply -auto-approve
