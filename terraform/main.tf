@@ -24,16 +24,16 @@ terraform {
 
 variable "account_id" { default = "4faf2c3b5dd13669f97dd976498ad56a" }
 
-module "mysql" {
-  source                         = "./modules/mysql/"
+module "aiven_mysql" {
+  source                         = "./modules/aiven-mysql/"
   aiven_api_token                = var.aiven_api_token
   project_name                   = var.project_name
   mysql_avnadmin_user_password   = var.mysql_avnadmin_user_password
   mysql_monitoring_user_password = var.mysql_monitoring_user_password
 }
 
-module "postgres" {
-  source                     = "./modules/postgres/"
+module "aiven_postgres" {
+  source                     = "./modules/aiven-postgres/"
   aiven_api_token            = var.aiven_api_token
   project_name               = var.project_name
   pg_avnadmin_user_password  = var.pg_avnadmin_user_password

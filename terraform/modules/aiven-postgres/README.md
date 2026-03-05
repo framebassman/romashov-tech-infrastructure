@@ -22,13 +22,11 @@ No modules.
 |------|------|
 | [aiven_pg.this](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg) | resource |
 | [aiven_pg_database.defaultdb](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_database) | resource |
-| [aiven_pg_database.foodikal_production](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_database) | resource |
 | [aiven_pg_database.inventory_production](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_database) | resource |
 | [aiven_pg_database.outline](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_database) | resource |
 | [aiven_pg_database.postgres](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_database) | resource |
 | [aiven_pg_database.vault](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_database) | resource |
 | [aiven_pg_user.avnadmin](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_user) | resource |
-| [aiven_pg_user.foodikal_user](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_user) | resource |
 | [aiven_pg_user.inventory_user](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_user) | resource |
 | [aiven_pg_user.outline_user](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_user) | resource |
 | [aiven_pg_user.vault_user](https://registry.terraform.io/providers/aiven/aiven/latest/docs/resources/pg_user) | resource |
