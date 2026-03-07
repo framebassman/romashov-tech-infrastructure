@@ -49,11 +49,11 @@ module "aiven_postgres" {
 
 # OCI: аутентификация из переменных (terraform.tfvars или backend.conf)
 provider "oci" {
-  tenancy_ocid     = var.oci_tenancy_ocid
-  user_ocid        = var.oci_user_ocid
-  fingerprint      = var.oci_fingerprint
-  private_key      = var.oci_private_key
-  region           = "eu-stockholm-1"
+  tenancy_ocid = var.oci_tenancy_ocid
+  user_ocid    = var.oci_user_ocid
+  fingerprint  = var.oci_fingerprint
+  private_key  = var.oci_private_key
+  region       = "eu-stockholm-1"
 }
 
 # IAM-политика для создания VM (создаётся первой, затем VM)
