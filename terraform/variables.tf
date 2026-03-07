@@ -67,26 +67,15 @@ variable "oci_private_key" {
   sensitive   = true
 }
 
-variable "oci_compartment_id" {
-  description = "OCI compartment OCID (root compartment = tenancy OCID)"
-  type        = string
-  default     = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
-}
-
 variable "oci_region" {
   description = "OCI region (e.g. eu-stockholm-1)"
   type        = string
   default     = "eu-stockholm-1"
 }
 
-variable "oci_instance_shape" {
-  description = "OCI compute instance shape (e.g. VM.Standard.E2.1.Micro)"
+variable "oci_iam_group_name" {
+  description = "IAM-группа для политики compute (должна содержать пользователя API)"
   type        = string
-  default     = "VM.Standard.E2.1.Micro"
+  default     = "Administrators"
 }
 
-variable "oci_instance_image_id" {
-  description = "OCI image OCID for the instance"
-  type        = string
-  default     = ""
-}

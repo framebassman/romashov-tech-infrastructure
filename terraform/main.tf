@@ -56,9 +56,35 @@ provider "oci" {
   region           = var.oci_region
 }
 
+# IAM-политика для создания VM (создаётся первой, затем VM)
+module "oci_iam" {
+  source       = "./modules/oci-iam/"
+  tenancy_ocid = var.oci_tenancy_ocid
+  group_name   = var.oci_iam_group_name
+}
+
+# Существующая VCN vcn-20250808-1700 — создаём в ней подсеть
+locals {
+  oci_compartment_id = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
+}
+
+data "oci_core_vcns" "default" {
+  compartment_id = local.oci_compartment_id
+  display_name   = "vcn-20250808-1700"
+}
+
+resource "oci_core_subnet" "default_vcn" {
+  compartment_id             = local.oci_compartment_id
+  vcn_id                     = data.oci_core_vcns.default.virtual_networks[0].id
+  cidr_block                 = "10.0.0.0/24"
+  display_name               = "default-vcn-subnet"
+  dns_label                  = "defaultsub"
+  prohibit_public_ip_on_vnic = false
+}
+
 module "oci_vm" {
-  source             = "./modules/oci-vm/"
-  compartment_id     = var.oci_compartment_id
-  instance_shape     = var.oci_instance_shape
-  instance_image_id  = var.oci_instance_image_id
+  source    = "./modules/oci-vm/"
+  subnet_id = oci_core_subnet.default_vcn.id
+
+  depends_on = [module.oci_iam]
 }
