@@ -12,3 +12,6 @@ mysql_monitoring_user_password = ""
 
 # OCI: VM и compartment захардкожены в модуле oci-vm и main.tf
 oci_private_key = ""
+
+# Алерт при достижении бюджета $5 (обязательно при использовании oci_budget_*)
+oci_budget_alert_email = "your-email@example.com"

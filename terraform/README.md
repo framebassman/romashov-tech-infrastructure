@@ -7,6 +7,10 @@
 - **oci-iam** — IAM-политика для compute/network
 - **oci-vm** — Oracle Cloud (одна VM sweden-node, Ubuntu 22.04). VM и подсеть в существующей VCN **vcn-20250808-1700** (подсеть создаётся Terraform, если в VCN её ещё нет).
 
+### Бюджет и алерт при $5 (PAYG)
+
+В корне создаётся бюджет **$5/месяц** и алерт, который шлёт письмо на `oci_budget_alert_email` при достижении $5 фактических расходов. Задай email в `terraform.tfvars`. Нужны права на Budgets в tenancy (например, `manage budget in tenancy`).
+
 ## Миграция state после переименования модулей (mysql → aiven_mysql, postgres → aiven_postgres)
 
 Если у тебя уже есть state с прежними именами модулей, выполни один раз:

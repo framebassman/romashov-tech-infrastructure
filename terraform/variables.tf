@@ -79,3 +79,8 @@ variable "oci_iam_group_name" {
   default     = "Administrators"
 }
 
+variable "oci_budget_alert_email" {
+  description = "Email для алерта при достижении бюджета $5 (Pay As You Go)"
+  type        = string
+}
+
