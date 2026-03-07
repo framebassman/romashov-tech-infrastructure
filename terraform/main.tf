@@ -49,16 +49,63 @@ module "aiven_postgres" {
 
 # OCI: аутентификация из переменных (terraform.tfvars или backend.conf)
 provider "oci" {
-  tenancy_ocid     = var.oci_tenancy_ocid
-  user_ocid        = var.oci_user_ocid
-  fingerprint      = var.oci_fingerprint
-  private_key      = var.oci_private_key
-  region           = var.oci_region
+  tenancy_ocid = var.oci_tenancy_ocid
+  user_ocid    = var.oci_user_ocid
+  fingerprint  = var.oci_fingerprint
+  private_key  = var.oci_private_key
+  region       = "eu-stockholm-1"
+}
+
+# IAM-политика для создания VM (создаётся первой, затем VM)
+module "oci_iam" {
+  source       = "./modules/oci-iam/"
+  tenancy_ocid = var.oci_tenancy_ocid
+  group_name   = "Administrators"
+}
+
+# Существующая VCN vcn-20250808-1700 — создаём в ней подсеть
+locals {
+  oci_compartment_id = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
+}
+
+data "oci_core_vcns" "default" {
+  compartment_id = local.oci_compartment_id
+  display_name   = "vcn-20250808-1700"
+}
+
+resource "oci_core_subnet" "default_vcn" {
+  compartment_id             = local.oci_compartment_id
+  vcn_id                     = data.oci_core_vcns.default.virtual_networks[0].id
+  cidr_block                 = "10.0.0.0/24"
+  display_name               = "default-vcn-subnet"
+  dns_label                  = "defaultsub"
+  prohibit_public_ip_on_vnic = false
 }
 
 module "oci_vm" {
-  source             = "./modules/oci-vm/"
-  compartment_id     = var.oci_compartment_id
-  instance_shape     = var.oci_instance_shape
-  instance_image_id  = var.oci_instance_image_id
+  source    = "./modules/oci-vm/"
+  subnet_id = oci_core_subnet.default_vcn.id
+
+  depends_on = [module.oci_iam]
+}
+
+# Бюджет $5 и алерт при достижении (для контроля расходов при PAYG)
+resource "oci_budget_budget" "monthly_limit" {
+  compartment_id = var.oci_tenancy_ocid
+  amount         = 5
+  reset_period   = "MONTHLY"
+  display_name   = "monthly-5usd-limit"
+  description    = "Alert when spend reaches $5 (PAYG safety)"
+  target_type    = "COMPARTMENT"
+  targets        = [var.oci_tenancy_ocid]
+}
+
+resource "oci_budget_alert_rule" "at_5_usd" {
+  budget_id      = oci_budget_budget.monthly_limit.id
+  display_name   = "alert-at-5-usd"
+  threshold      = 5
+  threshold_type = "ABSOLUTE"
+  type           = "ACTUAL"
+  message        = "OCI spend has reached $5 this month. Check Cost Analysis in Console."
+  recipients     = "dmitry@romashov.tech"
 }

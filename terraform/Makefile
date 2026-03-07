@@ -6,7 +6,7 @@ plan:
 	terraform plan
 
 apply:
-	terraform apply
+	terraform apply -auto-approve
 
 pull:
 	terraform state pull

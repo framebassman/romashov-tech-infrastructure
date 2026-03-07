@@ -46,47 +46,23 @@ variable "pg_vault_user_password" {
 variable "oci_tenancy_ocid" {
   description = "OCI tenancy OCID"
   type        = string
-  default = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
+  default     = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
 }
 
 variable "oci_user_ocid" {
   description = "OCI user OCID (идентификатор, не секрет)"
   type        = string
-  default = "ocid1.user.oc1..aaaaaaaadoufvv6oqe2dmjo4lxx455mpspm74sd6syz4o5bsznhs76edpd3a"
+  default     = "ocid1.user.oc1..aaaaaaaadoufvv6oqe2dmjo4lxx455mpspm74sd6syz4o5bsznhs76edpd3a"
 }
 
 variable "oci_fingerprint" {
   description = "Fingerprint of the OCI API key (идентификатор ключа, не секрет)"
   type        = string
-  default = "e9:16:a2:8f:7b:7f:ef:29:a8:4d:f8:c5:a3:1f:be:c0"
+  default     = "e9:16:a2:8f:7b:7f:ef:29:a8:4d:f8:c5:a3:1f:be:c0"
 }
 
 variable "oci_private_key" {
   description = "OCI API private key PEM file"
   type        = string
   sensitive   = true
-}
-
-variable "oci_compartment_id" {
-  description = "OCI compartment OCID (root compartment = tenancy OCID)"
-  type        = string
-  default     = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
-}
-
-variable "oci_region" {
-  description = "OCI region (e.g. eu-stockholm-1)"
-  type        = string
-  default     = "eu-stockholm-1"
-}
-
-variable "oci_instance_shape" {
-  description = "OCI compute instance shape (e.g. VM.Standard.E2.1.Micro)"
-  type        = string
-  default     = "VM.Standard.E2.1.Micro"
-}
-
-variable "oci_instance_image_id" {
-  description = "OCI image OCID for the instance"
-  type        = string
-  default     = ""
 }
