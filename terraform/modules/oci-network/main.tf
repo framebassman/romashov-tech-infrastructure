@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    oci = {
+      source  = "oracle/oci"
+      version = "~> 8"
+    }
+  }
+}
+
 resource "oci_core_vcn" "main" {
   compartment_id = var.compartment_id
   cidr_blocks    = ["10.0.0.0/16"]
