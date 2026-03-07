@@ -66,21 +66,3 @@ variable "oci_private_key" {
   type        = string
   sensitive   = true
 }
-
-variable "oci_region" {
-  description = "OCI region (e.g. eu-stockholm-1)"
-  type        = string
-  default     = "eu-stockholm-1"
-}
-
-variable "oci_iam_group_name" {
-  description = "IAM-группа для политики compute (должна содержать пользователя API)"
-  type        = string
-  default     = "Administrators"
-}
-
-variable "oci_budget_alert_email" {
-  description = "Email для алерта при достижении бюджета $5 (Pay As You Go)"
-  type        = string
-}
-

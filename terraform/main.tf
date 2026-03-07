@@ -53,14 +53,14 @@ provider "oci" {
   user_ocid        = var.oci_user_ocid
   fingerprint      = var.oci_fingerprint
   private_key      = var.oci_private_key
-  region           = var.oci_region
+  region           = "eu-stockholm-1"
 }
 
 # IAM-политика для создания VM (создаётся первой, затем VM)
 module "oci_iam" {
   source       = "./modules/oci-iam/"
   tenancy_ocid = var.oci_tenancy_ocid
-  group_name   = var.oci_iam_group_name
+  group_name   = "Administrators"
 }
 
 # Существующая VCN vcn-20250808-1700 — создаём в ней подсеть
@@ -107,5 +107,5 @@ resource "oci_budget_alert_rule" "at_5_usd" {
   threshold_type = "ABSOLUTE"
   type           = "ACTUAL"
   message        = "OCI spend has reached $5 this month. Check Cost Analysis in Console."
-  recipients     = var.oci_budget_alert_email
+  recipients     = "dmitry@romashov.tech"
 }

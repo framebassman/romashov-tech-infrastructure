@@ -9,7 +9,7 @@
 
 ### Бюджет и алерт при $5 (PAYG)
 
-В корне создаётся бюджет **$5/месяц** и алерт, который шлёт письмо на `oci_budget_alert_email` при достижении $5 фактических расходов. Задай email в `terraform.tfvars`. Нужны права на Budgets в tenancy (например, `manage budget in tenancy`).
+В корне создаётся бюджет **$5/месяц** и алерт на захардкоженный email при достижении $5 фактических расходов. Нужны права на Budgets в tenancy (например, `manage budget in tenancy`).
 
 ## Миграция state после переименования модулей (mysql → aiven_mysql, postgres → aiven_postgres)
 
