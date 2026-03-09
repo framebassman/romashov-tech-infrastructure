@@ -4,20 +4,19 @@
 # Дополнительно открыты 22 (SSH), 80, 443 tcp/udp (прокси/веб), 4443 tcp/udp (OpenConnect VPN).
 # Используется UFW (правила идемпотентны: повторный запуск не дублирует их).
 #
-# Запуск (IP из Terraform):
-#   ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml -e vpn_metrics_allowed_source_ip=$(cd ../terraform && terraform output -raw vpn_metrics_allowed_source_ip)
+# IP для доступа к :8000 берётся из инвентаря (группа sweden), без зависимости от Terraform.
 #
-# Или без -e, если в инвентаре есть группа sweden — подставится её хост.
+# Запуск: ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
 
 - hosts: vpn
   become: true
   vars:
-    vpn_metrics_allowed_source_ip: "{{ vpn_metrics_allowed_source_ip | default(groups['sweden'] | first) }}"
+    vpn_metrics_allowed_source_ip: "{{ groups['sweden'] | first }}"
   tasks:
-    - name: Fail if allowed source IP is not set
+    - name: Fail if group sweden is missing in inventory
       ansible.builtin.fail:
-        msg: "Передайте IP Alloy (sweden-node): -e vpn_metrics_allowed_source_ip=<IP>. Из Terraform: terraform output -raw vpn_metrics_allowed_source_ip"
-      when: not vpn_metrics_allowed_source_ip
+        msg: "В инвентаре должна быть группа sweden (хост Alloy). Проверьте hosts.yml."
+      when: groups['sweden'] | default([]) | length == 0
 
     - name: Ensure UFW is installed
       ansible.builtin.apt:

@@ -33,11 +33,9 @@ terraform state mv 'module.oci' 'module.oci_vm'
 
 ## Firewall для ocserv-exporter (VPN-ноды)
 
-На VPN-нодах порт 8000 (ocserv-exporter) должен быть доступен только с Alloy (sweden-node). IP sweden-node выводится в output `vpn_metrics_allowed_source_ip`. Применить iptables на VPN-хостах через Ansible:
+На VPN-нодах порт 8000 (ocserv-exporter) доступен только с Alloy (sweden-node). Плейбук `vpn-firewall.yml` берёт IP из инвентаря (группа `sweden`), без зависимости от Terraform:
 
 ```bash
 cd ansible
-ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml -e vpn_metrics_allowed_source_ip=$(cd ../terraform && terraform output -raw vpn_metrics_allowed_source_ip)
+ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
 ```
-
-Если в одном инвентаре есть группа `sweden`, плейбук подставит её IP сам; иначе передавать `-e vpn_metrics_allowed_source_ip=...` обязательно.
