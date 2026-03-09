@@ -30,3 +30,12 @@ terraform state mv 'module.postgres' 'module.aiven_postgres'
 ```bash
 terraform state mv 'module.oci' 'module.oci_vm'
 ```
+
+## Firewall для ocserv-exporter (VPN-ноды)
+
+На VPN-нодах порт 8000 (ocserv-exporter) доступен только с Alloy (sweden-node). Плейбук `vpn-firewall.yml` берёт IP из инвентаря (группа `sweden`), без зависимости от Terraform:
+
+```bash
+cd ansible
+ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
+```
