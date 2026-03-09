@@ -38,6 +38,16 @@
     args:
       chdir: "{{ project_path }}"
 
+  - name: Create .cloudflare for fetch-secrets (when token provided)
+    ansible.builtin.copy:
+      content: "export CLOUDFLARE_API_TOKEN={{ cloudflare_api_token }}\n"
+      dest: "{{ project_path }}/.cloudflare"
+      owner: d.romashov
+      group: wheel
+      mode: 0600
+    when: cloudflare_api_token is defined and cloudflare_api_token | length > 0
+    no_log: true
+
   - name: Start Deployment
     shell: "make start-prod-{{ application }}"
     args:
