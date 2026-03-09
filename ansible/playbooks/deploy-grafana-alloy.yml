@@ -7,10 +7,3 @@
     project_path: "/home/d.romashov/romashov-tech"
   roles:
     - romashov-tech-deployment
-  post_tasks:
-    - name: Ensure grafana-alloy .env exists (copy from example if missing)
-      copy:
-        src: "{{ project_path }}/services/grafana-alloy/.env.example"
-        dest: "{{ project_path }}/services/grafana-alloy/.env"
-        remote_src: yes
-        force: no
