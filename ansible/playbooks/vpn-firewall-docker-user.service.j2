@@ -1,0 +1,12 @@
+[Unit]
+Description=Restrict Docker port 8000 (ocserv-exporter) to Alloy IP (sweden-node)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/vpn-firewall-docker-user.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

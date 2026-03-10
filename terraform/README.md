@@ -30,3 +30,14 @@ terraform state mv 'module.postgres' 'module.aiven_postgres'
 ```bash
 terraform state mv 'module.oci' 'module.oci_vm'
 ```
+
+## Ограничение доступа к метрикам ocserv-exporter (VPN-ноды)
+
+На VPN-нодах порт 8000 (Docker → ocserv-exporter) доступен только с Alloy (sweden-node). Используется iptables цепочка **DOCKER-USER** (трафик к контейнерам не проходит через UFW INPUT). IP sweden-node берётся из инвентаря (группа `sweden`).
+
+```bash
+cd ansible
+ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
+```
+
+Откат (порт 8000 снова для всех): `ansible-playbook -i hosts.yml playbooks/vpn-firewall-rollback.yml`

@@ -1,0 +1,13 @@
+#!/bin/bash
+# Ограничивает доступ к Docker-публикации порта 8000 (ocserv-exporter): только IP Alloy (sweden-node).
+# Цепочка DOCKER-USER обрабатывает трафик к контейнерам до правил Docker (UFW здесь не участвует).
+set -e
+ALLOWED_IP="{{ vpn_metrics_allowed_source_ip }}"
+if ! iptables -L DOCKER-USER -n &>/dev/null; then
+  echo "DOCKER-USER chain not found (Docker not running?). Skipping." >&2
+  exit 0
+fi
+iptables -C DOCKER-USER -s "${ALLOWED_IP}" -p tcp --dport 8000 -j ACCEPT 2>/dev/null || \
+  iptables -I DOCKER-USER 1 -s "${ALLOWED_IP}" -p tcp --dport 8000 -j ACCEPT
+iptables -C DOCKER-USER -p tcp --dport 8000 -j DROP 2>/dev/null || \
+  iptables -A DOCKER-USER -p tcp --dport 8000 -j DROP
