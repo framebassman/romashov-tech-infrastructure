@@ -33,11 +33,6 @@
       single_branch: no
       accept_hostkey: yes
 
-  - name: Stop Deployment
-    shell: "make stop-prod-{{ application }}"
-    args:
-      chdir: "{{ project_path }}"
-
   - name: Create .cloudflare for fetch-secrets (when token provided)
     ansible.builtin.copy:
       content: "export CLOUDFLARE_API_TOKEN={{ cloudflare_api_token }}\n"
@@ -47,6 +42,11 @@
       mode: 0600
     when: cloudflare_api_token is defined and cloudflare_api_token | length > 0
     no_log: true
+
+  - name: Stop Deployment
+    shell: "make stop-prod-{{ application }}"
+    args:
+      chdir: "{{ project_path }}"
 
   - name: Start Deployment
     shell: "make start-prod-{{ application }}"
