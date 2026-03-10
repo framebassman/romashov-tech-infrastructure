@@ -31,11 +31,6 @@ terraform state mv 'module.postgres' 'module.aiven_postgres'
 terraform state mv 'module.oci' 'module.oci_vm'
 ```
 
-## Firewall для ocserv-exporter (VPN-ноды)
+## Метрики ocserv-exporter (VPN-ноды)
 
-На VPN-нодах порт 8000 (ocserv-exporter) доступен только с Alloy (sweden-node). Плейбук `vpn-firewall.yml` берёт IP из инвентаря (группа `sweden`), без зависимости от Terraform:
-
-```bash
-cd ansible
-ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
-```
+Доступ к метрикам на порту 8000 защищён секретным путём в URL (nginx-прокси). UFW и firewall-плейбук не используются. Плейбук `vpn-firewall.yml` при деплое только снимает старые артефакты (DOCKER-USER, скрипт), если они были.

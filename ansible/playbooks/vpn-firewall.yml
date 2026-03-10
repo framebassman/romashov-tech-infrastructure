@@ -1,88 +1,33 @@
 ---
-# Ограничивает доступ к ocserv-exporter (порт 8000) на VPN-нодах:
-# разрешён только IP Alloy (sweden-node). Остальной трафик на 8000 дропается.
-# Дополнительно открыты 22 (SSH), 80, 443 tcp/udp (прокси/веб), 4443 tcp/udp (OpenConnect VPN).
-# Используется UFW (правила идемпотентны: повторный запуск не дублирует их).
-#
-# IP для доступа к :8000 берётся из инвентаря (группа sweden), без зависимости от Terraform.
-#
-# Запуск: ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
+# Сбрасывает UFW на VPN-нодах в дефолтное состояние (удаляет все правила) и отключает.
+# Плюс очистка старых артефактов: vpn-firewall-docker-user service/script.
 
 - hosts: vpn
   become: true
-  vars:
-    vpn_metrics_allowed_source_ip: "{{ groups['sweden'] | first }}"
   tasks:
-    - name: Fail if group sweden is missing in inventory
-      ansible.builtin.fail:
-        msg: "В инвентаре должна быть группа sweden (хост Alloy). Проверьте hosts.yml."
-      when: groups['sweden'] | default([]) | length == 0
-
-    - name: Ensure UFW is installed
-      ansible.builtin.apt:
-        name: ufw
-        state: present
-      when: ansible_os_family == "Debian"
-
-    - name: Allow port 8000 from Alloy (ocserv-exporter scrape)
+    - name: Reset UFW to default and disable (removes all rules)
       ansible.builtin.command:
-        cmd: ufw allow from {{ vpn_metrics_allowed_source_ip }} to any port 8000 proto tcp
-      register: ufw_allow_8000
-      changed_when: ufw_allow_8000.rc == 0
-      failed_when: ufw_allow_8000.rc != 0 and 'already exists' not in (ufw_allow_8000.stderr | default('') + ufw_allow_8000.stdout | default(''))
-
-    - name: Deny port 8000 from everyone else
-      ansible.builtin.command:
-        cmd: ufw deny 8000/tcp
-      register: ufw_deny_8000
-      changed_when: ufw_deny_8000.rc == 0
-      failed_when: ufw_deny_8000.rc != 0 and 'already exists' not in (ufw_deny_8000.stderr | default('') + ufw_deny_8000.stdout | default(''))
-
-    - name: Allow SSH before enabling UFW (avoid lockout)
-      ansible.builtin.command:
-        cmd: ufw allow 22/tcp
-      register: ufw_allow_ssh
-      changed_when: ufw_allow_ssh.rc == 0
-      failed_when: ufw_allow_ssh.rc != 0 and 'already exists' not in (ufw_allow_ssh.stderr | default('') + ufw_allow_ssh.stdout | default(''))
-
-    - name: Allow HTTP (proxy / web on node)
-      ansible.builtin.command:
-        cmd: ufw allow 80/tcp
-      register: ufw_allow_80
-      changed_when: ufw_allow_80.rc == 0
-      failed_when: ufw_allow_80.rc != 0 and 'already exists' not in (ufw_allow_80.stderr | default('') + ufw_allow_80.stdout | default(''))
-
-    - name: Allow HTTPS (proxy / web on node)
-      ansible.builtin.command:
-        cmd: ufw allow 443/tcp
-      register: ufw_allow_443_tcp
-      changed_when: ufw_allow_443_tcp.rc == 0
-      failed_when: ufw_allow_443_tcp.rc != 0 and 'already exists' not in (ufw_allow_443_tcp.stderr | default('') + ufw_allow_443_tcp.stdout | default(''))
-
-    - name: Allow 443/udp (e.g. QUIC or other services)
-      ansible.builtin.command:
-        cmd: ufw allow 443/udp
-      register: ufw_allow_443_udp
-      changed_when: ufw_allow_443_udp.rc == 0
-      failed_when: ufw_allow_443_udp.rc != 0 and 'already exists' not in (ufw_allow_443_udp.stderr | default('') + ufw_allow_443_udp.stdout | default(''))
-
-    - name: Allow OpenConnect VPN (4443/tcp)
-      ansible.builtin.command:
-        cmd: ufw allow 4443/tcp
-      register: ufw_allow_4443_tcp
-      changed_when: ufw_allow_4443_tcp.rc == 0
-      failed_when: ufw_allow_4443_tcp.rc != 0 and 'already exists' not in (ufw_allow_4443_tcp.stderr | default('') + ufw_allow_4443_tcp.stdout | default(''))
-
-    - name: Allow OpenConnect VPN (4443/udp)
-      ansible.builtin.command:
-        cmd: ufw allow 4443/udp
-      register: ufw_allow_4443_udp
-      changed_when: ufw_allow_4443_udp.rc == 0
-      failed_when: ufw_allow_4443_udp.rc != 0 and 'already exists' not in (ufw_allow_4443_udp.stderr | default('') + ufw_allow_4443_udp.stdout | default(''))
-
-    - name: Ensure UFW is enabled
-      ansible.builtin.command:
-        cmd: ufw --force enable
-      register: ufw_enable
-      changed_when: ufw_enable.rc == 0
+        cmd: ufw --force reset
+      register: ufw_reset
+      changed_when: ufw_reset.rc == 0
       failed_when: false
+
+    - name: Stop and disable vpn-firewall-docker-user service (if present)
+      ansible.builtin.systemd:
+        name: vpn-firewall-docker-user
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      ignore_errors: true
+
+    - name: Remove vpn-firewall-docker-user script (if present)
+      ansible.builtin.file:
+        path: /usr/local/bin/vpn-firewall-docker-user.sh
+        state: absent
+      ignore_errors: true
+
+    - name: Remove vpn-firewall-docker-user unit file (if present)
+      ansible.builtin.file:
+        path: /etc/systemd/system/vpn-firewall-docker-user.service
+        state: absent
+      ignore_errors: true
