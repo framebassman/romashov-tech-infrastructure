@@ -1,0 +1,41 @@
+---
+# Ограничивает доступ к ocserv-exporter (порт 8000) на VPN-нодах: только IP Alloy (sweden-node).
+# Используется iptables цепочка DOCKER-USER (трафик к контейнерам идёт мимо UFW INPUT).
+# IP берётся из инвентаря (группа sweden).
+#
+# Запуск: ansible-playbook -i hosts.yml playbooks/vpn-firewall.yml
+
+- hosts: vpn
+  become: true
+  vars:
+    vpn_metrics_allowed_source_ip: "{{ groups['sweden'] | first }}"
+  tasks:
+    - name: Fail if group sweden is missing in inventory
+      ansible.builtin.fail:
+        msg: "В инвентаре должна быть группа sweden (хост Alloy). Проверьте hosts.yml."
+      when: groups['sweden'] | default([]) | length == 0
+
+    - name: Deploy script to restrict Docker port 8000 to Alloy IP (DOCKER-USER)
+      ansible.builtin.template:
+        src: vpn-firewall-docker-user.sh.j2
+        dest: /usr/local/bin/vpn-firewall-docker-user.sh
+        mode: "0755"
+
+    - name: Apply DOCKER-USER rules for port 8000
+      ansible.builtin.command:
+        cmd: /usr/local/bin/vpn-firewall-docker-user.sh
+      register: docker_user_script
+      changed_when: docker_user_script.rc == 0
+
+    - name: Deploy systemd unit to re-apply DOCKER-USER rules after Docker starts
+      ansible.builtin.template:
+        src: vpn-firewall-docker-user.service.j2
+        dest: /etc/systemd/system/vpn-firewall-docker-user.service
+        mode: "0644"
+
+    - name: Enable and start vpn-firewall-docker-user service
+      ansible.builtin.systemd:
+        name: vpn-firewall-docker-user
+        enabled: true
+        state: started
+        daemon_reload: true

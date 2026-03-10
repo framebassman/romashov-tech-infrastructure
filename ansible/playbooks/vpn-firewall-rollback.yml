@@ -1,0 +1,41 @@
+---
+# Откат ограничения доступа к порту 8000 (DOCKER-USER) на VPN-нодах.
+# Удаляет правила iptables, останавливает сервис, удаляет скрипт и unit.
+# После отката порт 8000 снова доступен всем.
+#
+# Запуск: ansible-playbook -i hosts.yml playbooks/vpn-firewall-rollback.yml
+
+- hosts: vpn
+  become: true
+  vars:
+    vpn_metrics_allowed_source_ip: "{{ groups['sweden'] | first }}"
+  tasks:
+    - name: Remove DOCKER-USER DROP rule for port 8000
+      ansible.builtin.command:
+        cmd: iptables -D DOCKER-USER -p tcp --dport 8000 -j DROP
+      ignore_errors: true
+
+    - name: Remove DOCKER-USER ACCEPT rule for port 8000 from Alloy IP
+      ansible.builtin.command:
+        cmd: iptables -D DOCKER-USER -s {{ vpn_metrics_allowed_source_ip }} -p tcp --dport 8000 -j ACCEPT
+      ignore_errors: true
+
+    - name: Stop and disable vpn-firewall-docker-user service
+      ansible.builtin.systemd:
+        name: vpn-firewall-docker-user
+        state: stopped
+        enabled: false
+        daemon_reload: true
+      ignore_errors: true
+
+    - name: Remove vpn-firewall-docker-user script
+      ansible.builtin.file:
+        path: /usr/local/bin/vpn-firewall-docker-user.sh
+        state: absent
+      ignore_errors: true
+
+    - name: Remove vpn-firewall-docker-user unit file
+      ansible.builtin.file:
+        path: /etc/systemd/system/vpn-firewall-docker-user.service
+        state: absent
+      ignore_errors: true
