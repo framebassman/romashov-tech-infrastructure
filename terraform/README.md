@@ -30,7 +30,3 @@ terraform state mv 'module.postgres' 'module.aiven_postgres'
 ```bash
 terraform state mv 'module.oci' 'module.oci_vm'
 ```
-
-## Метрики ocserv-exporter (VPN-ноды)
-
-Доступ к метрикам на порту 8000 защищён секретным путём в URL (nginx-прокси). UFW и firewall-плейбук не используются. Плейбук `vpn-firewall.yml` при деплое только снимает старые артефакты (DOCKER-USER, скрипт), если они были.
