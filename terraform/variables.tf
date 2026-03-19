@@ -42,6 +42,11 @@ variable "pg_vault_user_password" {
   type        = string
 }
 
+variable "pg_mtproxy_user_password" {
+  description = "Password for Postgres mtproxy-production user (MTProxy secrets DB)"
+  type        = string
+}
+
 # OCI (аутентификация через переменные в terraform.tfvars / backend.conf)
 variable "oci_tenancy_ocid" {
   description = "OCI tenancy OCID"

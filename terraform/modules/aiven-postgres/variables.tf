@@ -32,3 +32,8 @@ variable "pg_vault_user_password" {
   description = "Password for Postgres vault-user"
   type        = string
 }
+
+variable "pg_mtproxy_user_password" {
+  description = "Password for Postgres mtproxy-production user (MTProxy secrets DB)"
+  type        = string
+}
