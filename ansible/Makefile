@@ -16,3 +16,7 @@ deploy-vault:
 deploy-proxy:
 	make requirements
 	ansible-playbook playbooks/deploy-proxy.yml
+
+deploy-mtproxy:
+	make requirements
+	ansible-playbook playbooks/deploy-mtproxy.yml
