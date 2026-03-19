@@ -31,6 +31,8 @@ import:
 	-terraform import module.aiven_postgres.aiven_pg_user.outline_user romashov-tech/romashov-tech-postgres/outline-user
 	-terraform import module.aiven_postgres.aiven_pg_database.vault romashov-tech/romashov-tech-postgres/romashov-tech-vault
 	-terraform import module.aiven_postgres.aiven_pg_user.vault_user romashov-tech/romashov-tech-postgres/vault-user
+	-terraform import module.aiven_postgres.aiven_pg_database.mtproxy_production romashov-tech/romashov-tech-postgres/mtproxy-production
+	-terraform import module.aiven_postgres.aiven_pg_user.mtproxy_user romashov-tech/romashov-tech-postgres/mtproxy-production
 	@echo "--- OCI VM ---"
 	terraform import 'module.oci_vm.oci_core_instance.this' 'ocid1.instance.oc1.eu-stockholm-1.anqxeljryneafxycu45rfs7efir6uaw6cmpydknxiw25ph35fil254kkejgq'
 

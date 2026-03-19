@@ -45,6 +45,7 @@ module "aiven_postgres" {
   pg_inventory_user_password = var.pg_inventory_user_password
   pg_outline_user_password   = var.pg_outline_user_password
   pg_vault_user_password     = var.pg_vault_user_password
+  pg_mtproxy_user_password   = var.pg_mtproxy_user_password
 }
 
 # OCI: аутентификация из переменных (terraform.tfvars или backend.conf)

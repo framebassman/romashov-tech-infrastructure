@@ -70,3 +70,39 @@ resource "aiven_pg_user" "vault_user" {
   password             = var.pg_vault_user_password
   pg_allow_replication = false
 }
+
+# MTProxy: отдельная БД и пользователь для хранения секретов MTProxy
+resource "aiven_pg_database" "mtproxy_production" {
+  project       = aiven_pg.this.project
+  service_name  = aiven_pg.this.service_name
+  database_name = "mtproxy-production"
+}
+
+resource "aiven_pg_user" "mtproxy_user" {
+  project              = aiven_pg.this.project
+  service_name         = aiven_pg.this.service_name
+  username             = "mtproxy-production"
+  password             = var.pg_mtproxy_user_password
+  pg_allow_replication = false
+}
+
+# Права пользователя mtproxy-production на БД mtproxy-production (CONNECT + CREATE на БД и схему public).
+# Выполняется через psql под avnadmin (service_uri), т.к. Aiven не даёт выдать права через Terraform provider.
+resource "null_resource" "mtproxy_grants" {
+  depends_on = [
+    aiven_pg_database.mtproxy_production,
+    aiven_pg_user.mtproxy_user,
+  ]
+  triggers = {
+    db   = aiven_pg_database.mtproxy_production.database_name
+    user = aiven_pg_user.mtproxy_user.username
+  }
+  provisioner "local-exec" {
+    environment = {
+      PGCONN_POSTGRES = replace(aiven_pg.this.service_uri, "defaultdb", "postgres")
+      PGCONN_MTPROXY  = replace(aiven_pg.this.service_uri, "defaultdb", "mtproxy-production")
+    }
+    command     = "psql \"$PGCONN_POSTGRES\" -v ON_ERROR_STOP=1 -c 'GRANT CONNECT, CREATE ON DATABASE \"mtproxy-production\" TO \"mtproxy-production\";' && psql \"$PGCONN_MTPROXY\" -v ON_ERROR_STOP=1 -c 'GRANT USAGE, CREATE ON SCHEMA public TO \"mtproxy-production\";'"
+    interpreter = ["bash", "-c"]
+  }
+}

@@ -3,7 +3,7 @@
 ## Модули
 
 - **aiven-mysql** — Aiven MySQL (сервис, БД, пользователи)
-- **aiven-postgres** — Aiven Postgres (сервис, БД, пользователи)
+- **aiven-postgres** — Aiven Postgres (сервис, БД, пользователи). В том числе БД **mtproxy-production** и пользователь **mtproxy-production** для хранения секретов MTProxy (права CONNECT/CREATE на БД и USAGE/CREATE на схему public выдаются при apply через null_resource + psql под avnadmin).
 - **oci-iam** — IAM-политика для compute/network
 - **oci-vm** — Oracle Cloud (одна VM sweden-node, Ubuntu 22.04). VM и подсеть в существующей VCN **vcn-20250808-1700** (подсеть создаётся Terraform, если в VCN её ещё нет).
 
