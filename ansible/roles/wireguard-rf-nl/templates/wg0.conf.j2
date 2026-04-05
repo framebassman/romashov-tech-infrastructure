@@ -1,0 +1,26 @@
+# {{ ansible_managed }}
+{% if inventory_hostname == wireguard_nl_host %}
+[Interface]
+Address = {{ wireguard_nl_wg_ip }}/30
+ListenPort = {{ wireguard_listen_port }}
+PrivateKey = {{ wg_private_key }}
+PostUp = iptables -t nat -A POSTROUTING -s {{ wireguard_wg_cidr }} -o {{ host_public_iface }} -j MASQUERADE; iptables -A FORWARD -i wg0 -o {{ host_public_iface }} -j ACCEPT; iptables -A FORWARD -i {{ host_public_iface }} -o wg0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+PostDown = iptables -D FORWARD -i {{ host_public_iface }} -o wg0 -m state --state RELATED,ESTABLISHED -j ACCEPT; iptables -D FORWARD -i wg0 -o {{ host_public_iface }} -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_wg_cidr }} -o {{ host_public_iface }} -j MASQUERADE
+
+[Peer]
+PublicKey = {{ hostvars[wireguard_rf_host].wg_public_key }}
+AllowedIPs = {{ wireguard_rf_wg_ip }}/32
+{% else %}
+[Interface]
+Address = {{ wireguard_rf_wg_ip }}/30
+PrivateKey = {{ wg_private_key }}
+Table = off
+PostUp = ip rule add from {{ wireguard_oc_cidr }} table {{ wireguard_policy_table }}; ip route add default via {{ wireguard_nl_wg_ip }} dev wg0 table {{ wireguard_policy_table }}; iptables -t nat -A POSTROUTING -s {{ wireguard_oc_cidr }} -o wg0 -j MASQUERADE; iptables -A FORWARD -i {{ openconnect_tun_iface }} -o wg0 -j ACCEPT; iptables -A FORWARD -i wg0 -o {{ openconnect_tun_iface }} -m state --state RELATED,ESTABLISHED -j ACCEPT
+PostDown = iptables -D FORWARD -i wg0 -o {{ openconnect_tun_iface }} -m state --state RELATED,ESTABLISHED -j ACCEPT; iptables -D FORWARD -i {{ openconnect_tun_iface }} -o wg0 -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_oc_cidr }} -o wg0 -j MASQUERADE; ip route flush table {{ wireguard_policy_table }}; ip rule del from {{ wireguard_oc_cidr }} table {{ wireguard_policy_table }}
+
+[Peer]
+PublicKey = {{ hostvars[wireguard_nl_host].wg_public_key }}
+Endpoint = {{ wireguard_nl_host }}:{{ wireguard_listen_port }}
+AllowedIPs = 0.0.0.0/0
+PersistentKeepalive = 25
+{% endif %}

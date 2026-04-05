@@ -1,0 +1,82 @@
+---
+- name: Install wireguard tools
+  ansible.builtin.apt:
+    name: wireguard-tools
+    state: present
+    update_cache: true
+
+- name: Persist IPv4 forwarding
+  ansible.builtin.copy:
+    dest: /etc/sysctl.d/99-wireguard.conf
+    content: |
+      net.ipv4.ip_forward=1
+    mode: "0644"
+
+- name: Apply sysctl for ip_forward
+  ansible.builtin.command: sysctl -p /etc/sysctl.d/99-wireguard.conf
+  changed_when: true
+
+- name: Ensure WireGuard config directory
+  ansible.builtin.file:
+    path: /etc/wireguard
+    state: directory
+    mode: "0700"
+
+- name: Check for existing WireGuard private key
+  ansible.builtin.stat:
+    path: /etc/wireguard/wg0.key
+  register: wireguard_key_stat
+
+- name: Generate WireGuard private key
+  ansible.builtin.shell: umask 077; wg genkey > /etc/wireguard/wg0.key
+  when: not wireguard_key_stat.stat.exists
+  changed_when: true
+
+- name: Derive WireGuard public key
+  ansible.builtin.shell: wg pubkey < /etc/wireguard/wg0.key
+  register: wireguard_pubkey_cmd
+  changed_when: false
+
+- name: Publish wg public key as host fact
+  ansible.builtin.set_fact:
+    wg_public_key: "{{ wireguard_pubkey_cmd.stdout | trim }}"
+
+- name: Slurp private key for config template
+  ansible.builtin.slurp:
+    src: /etc/wireguard/wg0.key
+  register: wireguard_key_slurp
+  no_log: true
+
+- name: Set wg_private_key for template
+  ansible.builtin.set_fact:
+    wg_private_key: "{{ wireguard_key_slurp.content | b64decode | trim }}"
+  no_log: true
+
+- name: Set default outbound interface for NL (MASQUERADE / FORWARD)
+  ansible.builtin.set_fact:
+    host_public_iface: "{{ ansible_default_ipv4.interface | default('eth0') }}"
+  when: inventory_hostname == wireguard_nl_host
+
+- name: Deploy /etc/wireguard/wg0.conf
+  ansible.builtin.template:
+    src: wg0.conf.j2
+    dest: /etc/wireguard/wg0.conf
+    mode: "0600"
+  no_log: true
+  notify: Restart wg-quick@wg0
+
+- name: Enable and start WireGuard
+  ansible.builtin.systemd:
+    name: wg-quick@wg0
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Allow WireGuard UDP on NL (iptables)
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: udp
+    destination_port: "{{ wireguard_listen_port }}"
+    jump: ACCEPT
+    comment: "wireguard rf-nl"
+  when: inventory_hostname == wireguard_nl_host

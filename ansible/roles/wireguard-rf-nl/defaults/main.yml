@@ -1,0 +1,11 @@
+---
+# Переопределяются в group_vars/wireguard_russia_nl.yml
+wireguard_oc_cidr: "192.168.99.0/24"
+wireguard_wg_cidr: "10.200.0.0/30"
+wireguard_nl_wg_ip: "10.200.0.1"
+wireguard_rf_wg_ip: "10.200.0.2"
+wireguard_listen_port: 51820
+wireguard_nl_host: "91.84.124.164"
+wireguard_rf_host: "109.172.90.19"
+openconnect_tun_iface: "vpns0"
+wireguard_policy_table: "200"

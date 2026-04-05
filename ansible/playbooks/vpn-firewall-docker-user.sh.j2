@@ -11,3 +11,9 @@ iptables -C DOCKER-USER -s "${ALLOWED_IP}" -p tcp --dport 8000 -j ACCEPT 2>/dev/
   iptables -I DOCKER-USER 1 -s "${ALLOWED_IP}" -p tcp --dport 8000 -j ACCEPT
 iptables -C DOCKER-USER -p tcp --dport 8000 -j DROP 2>/dev/null || \
   iptables -A DOCKER-USER -p tcp --dport 8000 -j DROP
+
+# network_mode: host — exporter слушает :8000 на хосте, DOCKER-USER не срабатывает
+iptables -C INPUT -s "${ALLOWED_IP}" -p tcp --dport 8000 -j ACCEPT 2>/dev/null || \
+  iptables -I INPUT 1 -s "${ALLOWED_IP}" -p tcp --dport 8000 -j ACCEPT
+iptables -C INPUT -p tcp --dport 8000 -j DROP 2>/dev/null || \
+  iptables -A INPUT -p tcp --dport 8000 -j DROP

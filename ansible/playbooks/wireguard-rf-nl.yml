@@ -1,0 +1,13 @@
+---
+# Поднимает WireGuard между РФ (109.172.90.19 / node2) и NL (91.84.124.164 / node3).
+# Клиенты OpenConnect на РФ (пул 192.168.99.0/24) выходят в интернет через NL.
+#
+# Перед первым запуском: задеплойте OpenConnect с host network (romashov-tech: docker-compose.vpn.yml + ocserv 4443).
+#
+# ansible-playbook -i hosts.yml playbooks/wireguard-rf-nl.yml
+- name: WireGuard bridge Russia → Netherlands
+  hosts: wireguard_russia_nl
+  gather_facts: true
+  become: true
+  roles:
+    - wireguard-rf-nl

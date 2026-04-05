@@ -9,6 +9,10 @@ deploy-vpn:
 	make requirements
 	ansible-playbook playbooks/deploy-vpn.yml
 
+wireguard-rf-nl:
+	make requirements
+	ansible-playbook playbooks/wireguard-rf-nl.yml
+
 deploy-vault:
 	make requirements
 	ansible-playbook playbooks/deploy-vault.yml

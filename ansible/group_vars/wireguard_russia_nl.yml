@@ -1,0 +1,14 @@
+---
+# WireGuard «мост» РФ → NL: трафик клиентов OpenConnect (пул ниже) выходит в интернет через NL.
+wireguard_oc_cidr: "192.168.99.0/24"
+wireguard_wg_cidr: "10.200.0.0/30"
+wireguard_nl_wg_ip: "10.200.0.1"
+wireguard_rf_wg_ip: "10.200.0.2"
+wireguard_listen_port: 51820
+# Инвентарь по IP (ключи в hosts.yml)
+wireguard_nl_host: "91.84.124.164"
+wireguard_rf_host: "109.172.90.19"
+# Имя TUN ocserv (device = vpns → vpns0)
+openconnect_tun_iface: "vpns0"
+# Таблица policy routing на РФ
+wireguard_policy_table: "200"
