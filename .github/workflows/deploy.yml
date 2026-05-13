@@ -54,3 +54,14 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, galaxy requirements filepath
           requirements: ./requirements.yml
+      - name: Run 3x-ui playbook
+        uses: dawidd6/action-ansible-playbook@v4
+        with:
+            # Optional, directory where playbooks live
+          directory: ./ansible
+          # Required, playbook filepath
+          playbook: ./playbooks/deploy-3x-ui.yml
+          # Optional, SSH private key
+          key: ${{secrets.SSH_PRIVATE_KEY}}
+          # Optional, galaxy requirements filepath
+          requirements: ./requirements.yml
