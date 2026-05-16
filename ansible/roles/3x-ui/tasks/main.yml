@@ -1,16 +1,4 @@
 ---
-- name: Check x3_ui_fqdn is set for this host
-  ansible.builtin.assert:
-    that:
-      - x3_ui_fqdn is defined
-      - (x3_ui_fqdn | string | length) > 0
-    fail_msg: "Задайте x3_ui_fqdn для хоста в инвентаре (группа 3x-ui)."
-
-- name: Set system hostname
-  ansible.builtin.hostname:
-    name: "{{ x3_ui_fqdn }}"
-  become_user: root
-
 - name: Render docker-compose.yaml
   ansible.builtin.template:
     src: docker-compose.yaml.j2
