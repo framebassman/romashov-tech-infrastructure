@@ -17,3 +17,15 @@
 
   - name: Removing standard bashrc
     shell: creates=/root/.bashrc_backup mv /root/.bashrc /root/.bashrc_backup
+
+  - name: Check fqdn is set for this host
+    ansible.builtin.assert:
+      that:
+        - fqdn is defined
+        - (fqdn | string | length) > 0
+      fail_msg: "Задайте fqdn для хоста в инвентаре."
+
+  - name: Set system hostname
+    ansible.builtin.hostname:
+      name: "{{ fqdn }}"
+    become_user: root

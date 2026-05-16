@@ -26,6 +26,7 @@
       - ../files/komplukter.id_rsa.pub
       - ../files/pixel6.id_rsa.pub
       - ../files/workstation-Vostro-15-3510.id_rsa.pub
+      - ../files/workstation-Vostro-15-3510.id_ed25519.pub
       - ../files/github_actions_id_rsa.pub
 
   - name: Set 'bash' as default shell for d.romashov user
