@@ -29,3 +29,25 @@
     ansible.builtin.hostname:
       name: "{{ fqdn }}"
     become_user: root
+
+  - name: Get public IP
+    uri:
+      url: https://api.ipify.org
+      return_content: yes
+    register: public_ip
+
+  - name: Populate PUBLIC_IP environment variable
+    lineinfile:
+      path: "/etc/environment"
+      state: present
+      regexp: "^PUBLIC_IP="
+      line: "PUBLIC_IP={{ public_ip.content }}"
+    become: yes
+
+  - name: Populate CLOUDFLARE_API_TOKEN environment variable
+    lineinfile:
+      path: "/etc/environment"
+      regexp: "^CLOUDFLARE_API_TOKEN="
+      line: 'CLOUDFLARE_API_TOKEN={{ lookup("env", "CLOUDFLARE_API_TOKEN") }}'
+      state: present
+    become: yes
