@@ -47,12 +47,12 @@
   - name: Ensure CLOUDFLARE_API_TOKEN exists locally
     fail:
       msg: "CLOUDFLARE_API_TOKEN is not set"
-    when: lookup('env', 'CLOUDFLARE_API_TOKEN') == ''
+    when: CLOUDFLARE_API_TOKEN is not defined or CLOUDFLARE_API_TOKEN == ''
 
   - name: Populate CLOUDFLARE_API_TOKEN environment variable
     lineinfile:
       path: "/etc/environment"
       regexp: "^CLOUDFLARE_API_TOKEN="
-      line: 'CLOUDFLARE_API_TOKEN={{ lookup("env", "CLOUDFLARE_API_TOKEN") }}'
+      line: "CLOUDFLARE_API_TOKEN={{ CLOUDFLARE_API_TOKEN }}"
       state: present
     become: yes
