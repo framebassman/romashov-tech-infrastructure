@@ -7,5 +7,5 @@
   roles:
   - basic
   - create-users
-  # - ansible-role-docker
+  - ansible-role-docker
   # - filebeat
