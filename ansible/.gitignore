@@ -1,5 +1,6 @@
 .idea
 .vscode
+.venv
 
 # roles
 roles/ansible-role-*

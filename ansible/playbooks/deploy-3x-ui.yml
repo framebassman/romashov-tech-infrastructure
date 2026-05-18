@@ -1,9 +1,15 @@
 ---
-- hosts: 3x-ui
+- hosts: 3x-ui-in
   become: true
   become_user: d.romashov
   vars:
-    application: grafana-alloy
-    project_path: "/home/d.romashov/romashov-tech"
+    direction: "in"
+  roles:
+    - 3x-ui
+- hosts: 3x-ui-out
+  become: true
+  become_user: d.romashov
+  vars:
+    direction: "out"
   roles:
     - 3x-ui
