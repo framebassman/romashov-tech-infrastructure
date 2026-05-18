@@ -26,3 +26,7 @@ services:
       - traefik.http.routers.3xui.tls=true
       - traefik.http.routers.3xui.tls.certResolver=leresolver
       - traefik.http.services.3xui.loadbalancer.server.port=6432
+networks:
+  romashovtech_default:
+    name: romashovtech_default
+    external: true
