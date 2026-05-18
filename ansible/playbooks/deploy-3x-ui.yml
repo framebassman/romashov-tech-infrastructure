@@ -1,15 +1,9 @@
 ---
-- hosts: 3x-ui-in
+- hosts: 3x-ui
   become: true
   become_user: d.romashov
   vars:
-    direction: "in"
-  roles:
-    - 3x-ui
-- hosts: 3x-ui-out
-  become: true
-  become_user: d.romashov
-  vars:
-    direction: "out"
+    application: 3xui
+    project_path: "/home/d.romashov/romashov-tech"
   roles:
     - 3x-ui
