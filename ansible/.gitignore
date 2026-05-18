@@ -4,3 +4,6 @@
 
 # roles
 roles/ansible-role-*
+
+#tmp
+*x-ui.db

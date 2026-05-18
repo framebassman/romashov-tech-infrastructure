@@ -7,7 +7,7 @@ services:
       - 6432
       - 443
     volumes:
-      - $PWD/db/:/etc/x-ui/
+      - 3xui_db:/etc/x-ui/
       - $PWD/cert/:/root/cert/
     environment:
       XRAY_VMESS_AEAD_FORCED: false
@@ -30,3 +30,5 @@ networks:
   romashovtech_default:
     name: romashovtech_default
     external: true
+volumes:
+  3xui_db:
