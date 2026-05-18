@@ -1,5 +1,9 @@
 .idea
 .vscode
+.venv
 
 # roles
 roles/ansible-role-*
+
+#tmp
+*x-ui.db

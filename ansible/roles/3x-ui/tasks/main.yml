@@ -1,7 +1,7 @@
 ---
 - name: Render docker-compose.yaml
   ansible.builtin.template:
-    src: docker-compose.yaml.j2
+    src: "docker-compose.{{ direction }}.yaml.j2"
     dest: /home/d.romashov/3x-ui/docker-compose.yaml
     owner: d.romashov
     group: wheel
