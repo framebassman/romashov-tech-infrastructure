@@ -1,4 +1,12 @@
 ---
+- hosts: russian
+  become: true
+  become_user: d.romashov
+  vars:
+    application: proxy
+    project_path: "/home/d.romashov/romashov-tech"
+  roles:
+    - romashov-tech-deployment
 - hosts: 3x-ui
   become: true
   become_user: d.romashov
