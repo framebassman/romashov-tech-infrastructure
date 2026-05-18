@@ -8,6 +8,7 @@ services:
       - 443
     ports:
       - 2053:2053
+      - 6432:6432
     volumes:
       - 3xui_db:/etc/x-ui/
       - $PWD/cert/:/root/cert/
