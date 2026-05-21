@@ -4,7 +4,7 @@ on:
     branches:
       - 'master'
 jobs:
-  deploy-terraform-modules:
+  apply-terraform-modules:
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -26,9 +26,9 @@ jobs:
       - run: terraform plan
       - run: terraform apply -auto-approve
 
-  deploy-ansible-playbooks:
-    runs-on: ubuntu-22.04
-    needs: deploy-terraform-modules
+  apply-infrastructure-playbook:
+    runs-on: ubuntu-24.04
+    needs: apply-terraform-modules
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -45,6 +45,13 @@ jobs:
           requirements: ./requirements.yml
           options: |
             --extra-vars CLOUDFLARE_API_TOKEN=${{secrets.CLOUDFLARE_API_TOKEN}}
+
+  apply-firewall-playbook:
+    runs-on: ubuntu-24.04
+    needs: apply-infrastructure-playbook
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Run firewall playbook for VPN nodes
         uses: dawidd6/action-ansible-playbook@v9
         with:
@@ -56,6 +63,13 @@ jobs:
           key: ${{secrets.SSH_PRIVATE_KEY}}
           # Optional, galaxy requirements filepath
           requirements: ./requirements.yml
+
+  apply-3xui-playbook:
+    runs-on: ubuntu-24.04
+    needs: apply-infrastructure-playbook
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Run 3x-ui playbook
         uses: dawidd6/action-ansible-playbook@v9
         with:

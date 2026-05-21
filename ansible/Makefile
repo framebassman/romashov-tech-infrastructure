@@ -24,3 +24,10 @@ deploy-mtproxy:
 deploy-3x-ui:
 	make requirements
 	ansible-playbook playbooks/deploy-3x-ui.yml
+
+backup-3x-ui:
+	make requirements
+	ansible-playbook playbooks/backup-3x-ui.yml \
+		--extra-vars CLOUDFLARE_R2_API_KEY_ID=$${CLOUDFLARE_R2_API_KEY_ID} \
+		--extra-vars CLOUDFLARE_R2_API_ACCESS_SECRET=$${CLOUDFLARE_R2_API_ACCESS_SECRET} \
+		--extra-vars CLOUDFLARE_ACCOUNT_ID=$${CLOUDFLARE_ACCOUNT_ID}

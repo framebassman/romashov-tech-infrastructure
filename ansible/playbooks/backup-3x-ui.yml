@@ -5,5 +5,8 @@
   vars:
     application: 3xui
     project_path: "/home/d.romashov/romashov-tech"
-  roles:
-    - 3x-ui
+  tasks:
+    - name: Run backup tasks from 3x-ui role
+      ansible.builtin.include_role:
+        name: 3x-ui
+        tasks_from: backup.yml

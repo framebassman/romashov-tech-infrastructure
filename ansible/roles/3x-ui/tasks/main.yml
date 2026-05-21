@@ -10,9 +10,13 @@
 - name: Tear down existing services
   community.docker.docker_compose_v2:
     project_src: /home/d.romashov/3x-ui
+    services:
+      - 3xui
     state: absent
 
 - name: Create and start services
   community.docker.docker_compose_v2:
     project_src: /home/d.romashov/3x-ui
+    services:
+      - 3xui
   register: output
