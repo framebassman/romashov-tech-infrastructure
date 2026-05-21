@@ -77,4 +77,4 @@ jobs:
           options: |
             --extra-vars CLOUDFLARE_R2_API_KEY_ID=${{ secrets.CLOUDFLARE_R2_API_KEY_ID }}
             --extra-vars CLOUDFLARE_R2_API_ACCESS_SECRET=${{ secrets.CLOUDFLARE_R2_API_ACCESS_SECRET }}
-            --extra-vars CLOUDFLARE_R2_S3_API=${{ secrets.CLOUDFLARE_R2_S3_API }}
+            --extra-vars CLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

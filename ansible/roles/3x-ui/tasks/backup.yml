@@ -4,10 +4,10 @@
     that:
       - CLOUDFLARE_R2_API_KEY_ID is defined and CLOUDFLARE_R2_API_KEY_ID | length > 0
       - CLOUDFLARE_R2_API_ACCESS_SECRET is defined and CLOUDFLARE_R2_API_ACCESS_SECRET | length > 0
-      - CLOUDFLARE_R2_S3_API is defined and CLOUDFLARE_R2_S3_API | length > 0
+      - CLOUDFLARE_ACCOUNT_ID is defined and CLOUDFLARE_ACCOUNT_ID | length > 0
     fail_msg: >-
       Missing R2 credentials. Pass via --extra-vars
-      CLOUDFLARE_R2_API_KEY_ID / CLOUDFLARE_R2_API_ACCESS_SECRET / CLOUDFLARE_R2_S3_API.
+      CLOUDFLARE_R2_API_KEY_ID / CLOUDFLARE_R2_API_ACCESS_SECRET / CLOUDFLARE_ACCOUNT_ID.
     quiet: true
   delegate_to: localhost
   run_once: true
@@ -31,7 +31,7 @@
   environment:
     CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
     CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-    CLOUDFLARE_R2_S3_API: "{{ CLOUDFLARE_R2_S3_API }}"
+    CLOUDFLARE_R2_S3_API: "{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
 
 - name: Snapshot 3xui DB
   block:
@@ -61,7 +61,7 @@
       environment:
         CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
         CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-        CLOUDFLARE_R2_S3_API: "{{ CLOUDFLARE_R2_S3_API }}"
+        CLOUDFLARE_R2_S3_API: "{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
 
 - name: Show backup output
   ansible.builtin.debug:
