@@ -1,0 +1,29 @@
+name: Restore 3x config
+
+on:
+  workflow_dispatch:
+    inputs:
+      backup_filename:
+        description: 'Backup basename (e.g. backup-2026-05-21T09-58-02.tar). Leave empty for latest.'
+        required: false
+        default: ''
+        type: string
+
+jobs:
+  run-ansible-playbooks:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Run restore-3x-ui playbook
+        uses: dawidd6/action-ansible-playbook@v9
+        with:
+          directory: ./ansible
+          playbook: ./playbooks/restore-3x-ui.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          requirements: ./requirements.yml
+          options: |
+            --extra-vars CLOUDFLARE_R2_API_KEY_ID=${{ secrets.CLOUDFLARE_R2_API_KEY_ID }}
+            --extra-vars CLOUDFLARE_R2_API_ACCESS_SECRET=${{ secrets.CLOUDFLARE_R2_API_ACCESS_SECRET }}
+            --extra-vars CLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+            --extra-vars backup_filename=${{ inputs.backup_filename }}

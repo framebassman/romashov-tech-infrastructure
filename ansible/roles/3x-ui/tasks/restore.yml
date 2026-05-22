@@ -1,0 +1,81 @@
+---
+- name: Verify R2 credentials are provided
+  ansible.builtin.assert:
+    that:
+      - CLOUDFLARE_R2_API_KEY_ID is defined and CLOUDFLARE_R2_API_KEY_ID | length > 0
+      - CLOUDFLARE_R2_API_ACCESS_SECRET is defined and CLOUDFLARE_R2_API_ACCESS_SECRET | length > 0
+      - CLOUDFLARE_ACCOUNT_ID is defined and CLOUDFLARE_ACCOUNT_ID | length > 0
+    fail_msg: >-
+      Missing R2 credentials. Pass via --extra-vars
+      CLOUDFLARE_R2_API_KEY_ID / CLOUDFLARE_R2_API_ACCESS_SECRET / CLOUDFLARE_ACCOUNT_ID.
+    quiet: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Set R2 endpoint URL
+  ansible.builtin.set_fact:
+    r2_endpoint: "https://{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+
+- name: List backups in R2
+  amazon.aws.s3_object_info:
+    bucket_name: backups
+    prefix: "{{ fqdn }}/backup-"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+  register: backup_list
+  when: backup_filename is not defined or backup_filename | length == 0
+
+- name: Set backup object key
+  ansible.builtin.set_fact:
+    backup_object_key: >-
+      {{ fqdn ~ '/' ~ backup_filename
+         if (backup_filename is defined and backup_filename | length > 0)
+         else (backup_list.s3_keys | sort | last) }}
+
+- name: Verify backup object key was determined
+  ansible.builtin.assert:
+    that:
+      - backup_object_key | length > 0
+      - backup_object_key != 'None'
+    fail_msg: "No backup found under s3://backups/{{ fqdn }}/backup-* and no backup_filename provided."
+
+- name: Download backup archive to host
+  amazon.aws.s3_object:
+    mode: get
+    bucket: backups
+    object: "{{ backup_object_key }}"
+    dest: /tmp/backup.archive
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+
+- name: Restore 3xui DB volume
+  block:
+    - name: Stop 3xui_app container
+      community.docker.docker_container:
+        name: 3xui_app
+        state: stopped
+
+    - name: Clear volume data directory
+      ansible.builtin.command:
+        cmd: find /var/lib/docker/volumes/3x-ui_3xui_db/_data -mindepth 1 -delete
+      become_user: root
+
+    - name: Extract backup into volume data directory
+      ansible.builtin.command:
+        cmd: tar -xf /tmp/backup.archive -C /var/lib/docker/volumes/3x-ui_3xui_db/_data
+      become_user: root
+      changed_when: true
+  always:
+    - name: Start 3xui_app container
+      community.docker.docker_container:
+        name: 3xui_app
+        state: started
+
+    - name: Remove backup archive from host
+      ansible.builtin.file:
+        path: /tmp/backup.archive
+        state: absent
