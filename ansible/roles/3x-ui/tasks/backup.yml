@@ -47,6 +47,28 @@
     secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
     region: us-east-1
 
+- name: List existing backups in R2
+  amazon.aws.s3_object:
+    mode: list
+    bucket: backups
+    prefix: "{{ fqdn }}/backup-"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+  register: existing_backups
+
+- name: Prune old backups, keeping the latest {{ backup_retention_count }}
+  amazon.aws.s3_object:
+    mode: delobj
+    bucket: backups
+    object: "{{ item }}"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+  loop: "{{ (existing_backups.s3_keys | sort)[:-backup_retention_count] }}"
+
 - name: Remove local backup archive
   ansible.builtin.file:
     path: "{{ backup_archive }}"
