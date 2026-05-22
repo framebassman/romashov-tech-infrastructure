@@ -86,8 +86,33 @@ resource "oci_core_subnet" "default_vcn" {
 module "oci_vm" {
   source    = "./modules/oci-vm/"
   subnet_id = oci_core_subnet.default_vcn.id
+  nsg_ids   = [oci_core_network_security_group.sweden_inbound.id]
 
   depends_on = [module.oci_iam]
+}
+
+# NSG для sweden-node: входящий доступ к публичным сервисам, ограниченный по source IP.
+# Combined with the VCN default security list as UNION at evaluation time.
+resource "oci_core_network_security_group" "sweden_inbound" {
+  compartment_id = local.oci_compartment_id
+  vcn_id         = data.oci_core_vcns.default.virtual_networks[0].id
+  display_name   = "sweden-inbound"
+}
+
+# monitoring (uptime-kuma на host:80) — фронтит traefik с node2.
+resource "oci_core_network_security_group_security_rule" "sweden_monitoring_from_node2" {
+  network_security_group_id = oci_core_network_security_group.sweden_inbound.id
+  direction                 = "INGRESS"
+  protocol                  = "6" # TCP
+  source_type               = "CIDR_BLOCK"
+  source                    = "109.172.90.19/32"
+  description               = "monitoring (uptime-kuma) reverse-proxied from node2"
+  tcp_options {
+    destination_port_range {
+      min = 80
+      max = 80
+    }
+  }
 }
 
 # Бюджет $5 и алерт при достижении (для контроля расходов при PAYG)

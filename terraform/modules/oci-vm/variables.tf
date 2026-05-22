@@ -3,3 +3,9 @@ variable "subnet_id" {
   description = "OCID подсети (из корня: oci_core_subnet.default_vcn.id)"
   type        = string
 }
+
+variable "nsg_ids" {
+  description = "OCID списка NSG для primary VNIC. Combined with subnet security list (UNION) at evaluation time."
+  type        = list(string)
+  default     = []
+}
