@@ -16,7 +16,7 @@
   ansible.builtin.set_fact:
     r2_endpoint: "https://{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
     backup_archive: >-
-      /tmp/backup-{{ ansible_date_time.date }}T{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}.tar
+      /tmp/backup-{{ ansible_facts['date_time']['date'] }}T{{ ansible_facts['date_time']['hour'] }}-{{ ansible_facts['date_time']['minute'] }}-{{ ansible_facts['date_time']['second'] }}.tar
 
 - name: Create backup archive and restore app
   block:
@@ -46,11 +46,11 @@
     access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
     secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
     region: us-east-1
+    permission: []
 
 - name: List existing backups in R2
-  amazon.aws.s3_object:
-    mode: list
-    bucket: backups
+  amazon.aws.s3_object_info:
+    bucket_name: backups
     prefix: "{{ fqdn }}/backup-"
     endpoint_url: "{{ r2_endpoint }}"
     access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
