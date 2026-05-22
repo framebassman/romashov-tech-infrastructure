@@ -1,0 +1,18 @@
+services:
+  restore:
+    image: alpine:3.21
+    container_name: 3xui_restore
+    restart: "no"
+    environment:
+      AWS_ACCESS_KEY_ID: ${CLOUDFLARE_R2_API_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${CLOUDFLARE_R2_API_ACCESS_SECRET}
+      AWS_DEFAULT_REGION: auto
+      AWS_ENDPOINT_URL: https://${CLOUDFLARE_R2_S3_API}
+    command: ["/scripts/restore.sh"]
+    volumes:
+      - 3xui_db:/restore
+      - /home/d.romashov/3x-ui/restore.sh:/scripts/restore.sh:ro
+volumes:
+  3xui_db:
+    external: true
+    name: 3x-ui_3xui_db
