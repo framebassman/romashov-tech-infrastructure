@@ -56,6 +56,7 @@ EOT
     assign_public_ip       = local.assign_public_ip
     hostname_label         = local.instance_display_name
     skip_source_dest_check = false
+    nsg_ids                = var.nsg_ids
   }
 
   source_details {
