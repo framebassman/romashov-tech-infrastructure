@@ -25,6 +25,10 @@ deploy-3x-ui:
 	make requirements
 	ansible-playbook playbooks/deploy-3x-ui.yml
 
+deploy-monitoring:
+	make requirements
+	ansible-playbook playbooks/deploy-monitoring.yml
+
 backup-3x-ui:
 	make requirements
 	ansible-playbook playbooks/backup-3x-ui.yml \
