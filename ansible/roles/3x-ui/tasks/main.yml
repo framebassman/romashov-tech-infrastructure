@@ -1,11 +1,4 @@
 ---
-- name: Install required packages
-  ansible.builtin.apt:
-    name:
-      - python3-boto3
-    state: present
-    update_cache: false
-
 - name: Render docker-compose.yaml
   ansible.builtin.template:
     src: "docker-compose.{{ direction }}.yaml.j2"

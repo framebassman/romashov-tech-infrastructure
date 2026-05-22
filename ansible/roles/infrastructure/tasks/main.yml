@@ -1,0 +1,8 @@
+---
+- name: Install AWS CLI and AWS SDK dependencies
+  ansible.builtin.apt:
+    name:
+      - awscli
+      - python3-boto3
+    state: present
+    update_cache: yes
