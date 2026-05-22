@@ -57,10 +57,9 @@
       state: present
     become: yes
 
-  - name: Install AWS CLI and AWS SDK dependencies
+  - name: Install AWS SDK dependencies
     ansible.builtin.apt:
       name:
-        - awscli
         - python3-boto3
       state: present
       update_cache: yes
