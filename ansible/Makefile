@@ -1,5 +1,5 @@
 requirements:
-	ansible-galaxy install --role-file requirements.yml
+	ansible-galaxy install -r requirements.yml
 
 infrastructure:
 	make requirements

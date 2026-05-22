@@ -12,57 +12,42 @@
   delegate_to: localhost
   run_once: true
 
-- name: Render backup compose
-  ansible.builtin.template:
-    src: docker-compose.backup.yaml.j2
-    dest: /home/d.romashov/3x-ui/docker-compose.backup.yaml
-    owner: d.romashov
-    group: wheel
-    mode: "0644"
+- name: Set R2 endpoint and backup archive path
+  ansible.builtin.set_fact:
+    r2_endpoint: "https://{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+    backup_archive: >-
+      /tmp/backup-{{ ansible_date_time.date }}T{{ ansible_date_time.hour }}-{{ ansible_date_time.minute }}-{{ ansible_date_time.second }}.tar
 
-- name: Start backup container
-  community.docker.docker_compose_v2:
-    project_src: /home/d.romashov/3x-ui
-    files:
-      - docker-compose.backup.yaml
-    services:
-      - backup
-    state: present
-  environment:
-    CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
-    CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-    CLOUDFLARE_R2_S3_API: "{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
-
-- name: Snapshot 3xui DB
+- name: Create backup archive and restore app
   block:
     - name: Stop 3xui_app container
       community.docker.docker_container:
         name: 3xui_app
         state: stopped
 
-    - name: Run offen backup
-      ansible.builtin.command: docker exec 3xui_backup backup
-      register: backup_result
-      changed_when: backup_result.rc == 0
+    - name: Create backup archive
+      ansible.builtin.command:
+        cmd: tar -cf {{ backup_archive }} -C /var/lib/docker/volumes/3x-ui_3xui_db/_data .
+      become_user: root
+      changed_when: true
   always:
     - name: Start 3xui_app container
       community.docker.docker_container:
         name: 3xui_app
         state: started
 
-    - name: Remove backup container
-      community.docker.docker_compose_v2:
-        project_src: /home/d.romashov/3x-ui
-        files:
-          - docker-compose.backup.yaml
-        services:
-          - backup
-        state: absent
-      environment:
-        CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
-        CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-        CLOUDFLARE_R2_S3_API: "{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+- name: Upload backup archive to R2
+  amazon.aws.s3_object:
+    mode: put
+    bucket: backups
+    object: "{{ fqdn }}/{{ backup_archive | basename }}"
+    src: "{{ backup_archive }}"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
 
-- name: Show backup output
-  ansible.builtin.debug:
-    var: backup_result.stdout_lines
+- name: Remove local backup archive
+  ansible.builtin.file:
+    path: "{{ backup_archive }}"
+    state: absent

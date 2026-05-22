@@ -14,83 +14,44 @@
 
 - name: Set R2 endpoint URL
   ansible.builtin.set_fact:
-    r2_endpoint: "{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+    r2_endpoint: "https://{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
 
-- name: Copy restore compose
-  ansible.builtin.copy:
-    src: docker-compose.restore.yaml
-    dest: /home/d.romashov/3x-ui/docker-compose.restore.yaml
-    owner: d.romashov
-    group: wheel
-    mode: "0644"
-
-- name: Copy restore script
-  ansible.builtin.copy:
-    src: restore.sh
-    dest: /home/d.romashov/3x-ui/restore.sh
-    owner: d.romashov
-    group: wheel
-    mode: "0755"
-
-- name: Resolve latest backup from R2
+- name: List backups in R2
+  amazon.aws.s3_object:
+    mode: list
+    bucket: backups
+    prefix: "{{ fqdn }}/backup-"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+  register: backup_list
   when: backup_filename is not defined or backup_filename | length == 0
-  block:
-    - name: Create output directory for list result
-      ansible.builtin.file:
-        path: /tmp/3xui-restore
-        state: directory
-        mode: "0755"
 
-    - name: Run list service
-      community.docker.docker_compose_v2:
-        project_src: /home/d.romashov/3x-ui
-        files:
-          - docker-compose.restore.yaml
-        services:
-          - list
-        state: present
-        wait: true
-        wait_timeout: 60
-      environment:
-        CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
-        CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-        CLOUDFLARE_R2_S3_API: "{{ r2_endpoint }}"
-        BACKUP_PREFIX: "{{ fqdn }}/backup-"
-
-    - name: Read latest backup key
-      ansible.builtin.slurp:
-        src: /tmp/3xui-restore/latest_key.txt
-      register: latest_key_file
-
-    - name: Set backup_object_key from R2 listing
-      ansible.builtin.set_fact:
-        backup_object_key: "{{ latest_key_file.content | b64decode | trim }}"
-  always:
-    - name: Remove list service
-      community.docker.docker_compose_v2:
-        project_src: /home/d.romashov/3x-ui
-        files:
-          - docker-compose.restore.yaml
-        services:
-          - list
-        state: absent
-      environment:
-        CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
-        CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-        CLOUDFLARE_R2_S3_API: "{{ r2_endpoint }}"
-        BACKUP_PREFIX: "{{ fqdn }}/backup-"
-
-- name: Set backup_object_key from explicit filename
+- name: Set backup object key
   ansible.builtin.set_fact:
-    backup_object_key: "{{ fqdn }}/{{ backup_filename }}"
-  when: backup_filename is defined and backup_filename | length > 0
+    backup_object_key: >-
+      {{ fqdn ~ '/' ~ backup_filename
+         if (backup_filename is defined and backup_filename | length > 0)
+         else (backup_list.s3_keys | sort | last) }}
 
 - name: Verify backup object key was determined
   ansible.builtin.assert:
     that:
-      - backup_object_key is defined and backup_object_key | length > 0
+      - backup_object_key | length > 0
       - backup_object_key != 'None'
     fail_msg: "No backup found under s3://backups/{{ fqdn }}/backup-* and no backup_filename provided."
+
+- name: Download backup archive to host
+  amazon.aws.s3_object:
+    mode: get
+    bucket: backups
+    object: "{{ backup_object_key }}"
+    dest: /tmp/backup.archive
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
 
 - name: Restore 3xui DB volume
   block:
@@ -99,57 +60,23 @@
         name: 3xui_app
         state: stopped
 
-    - name: Remove 3xui_db volume
-      community.docker.docker_volume:
-        name: 3x-ui_3xui_db
-        state: absent
+    - name: Clear volume data directory
+      ansible.builtin.command:
+        cmd: find /var/lib/docker/volumes/3x-ui_3xui_db/_data -mindepth 1 -delete
+      become_user: root
 
-    - name: Recreate empty 3xui_db volume
-      community.docker.docker_volume:
-        name: 3x-ui_3xui_db
-        state: present
-
-    - name: Run restore service
-      community.docker.docker_compose_v2:
-        project_src: /home/d.romashov/3x-ui
-        files:
-          - docker-compose.restore.yaml
-        services:
-          - restore
-        state: present
-        wait: true
-        wait_timeout: 300
-      environment:
-        CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
-        CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-        CLOUDFLARE_R2_S3_API: "{{ r2_endpoint }}"
-        BACKUP_OBJECT_KEY: "{{ backup_object_key }}"
-
-    - name: Check restore container exit code
-      community.docker.docker_container_info:
-        name: 3xui_restore
-      register: restore_info
-
-    - name: Fail if restore container exited with error
-      ansible.builtin.fail:
-        msg: "Restore container exited with code {{ restore_info.container.State.ExitCode }}"
-      when: restore_info.container.State.ExitCode != 0
+    - name: Extract backup into volume data directory
+      ansible.builtin.command:
+        cmd: tar -xf /tmp/backup.archive -C /var/lib/docker/volumes/3x-ui_3xui_db/_data
+      become_user: root
+      changed_when: true
   always:
     - name: Start 3xui_app container
       community.docker.docker_container:
         name: 3xui_app
         state: started
 
-    - name: Remove restore service
-      community.docker.docker_compose_v2:
-        project_src: /home/d.romashov/3x-ui
-        files:
-          - docker-compose.restore.yaml
-        services:
-          - restore
+    - name: Remove backup archive from host
+      ansible.builtin.file:
+        path: /tmp/backup.archive
         state: absent
-      environment:
-        CLOUDFLARE_R2_API_KEY_ID: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
-        CLOUDFLARE_R2_API_ACCESS_SECRET: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
-        CLOUDFLARE_R2_S3_API: "{{ r2_endpoint }}"
-        BACKUP_OBJECT_KEY: "{{ backup_object_key }}"

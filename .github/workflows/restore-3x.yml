@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       backup_filename:
-        description: 'Backup basename (e.g. backup-2026-05-21T09-58-02.tar.zst). Leave empty for latest.'
+        description: 'Backup basename (e.g. backup-2026-05-21T09-58-02.tar). Leave empty for latest.'
         required: false
         default: ''
         type: string
