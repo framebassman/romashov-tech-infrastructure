@@ -1,0 +1,9 @@
+---
+- hosts: sweden
+  become: true
+  become_user: d.romashov
+  vars:
+    application: monitoring
+    project_path: "/home/d.romashov/romashov-tech"
+  roles:
+    - romashov-tech-deployment
