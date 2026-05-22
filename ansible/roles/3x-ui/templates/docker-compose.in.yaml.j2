@@ -4,10 +4,10 @@ services:
     container_name: 3xui_app
     hostname: "{{ fqdn }}"
     expose:
+      - 80
       - 443
       - 2053
       - 2096
-      - 6432
     volumes:
       - 3xui_db:/etc/x-ui/
       - $PWD/cert/:/root/cert/

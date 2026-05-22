@@ -20,3 +20,25 @@
     services:
       - 3xui
   register: output
+
+- name: Read current 3x-ui panel port
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail
+      docker exec 3xui_app /app/x-ui setting -show | awk -F': ' '/^port:/{print $2}'
+    executable: /bin/bash
+  register: xui_current_port
+  changed_when: false
+
+- name: Set 3x-ui panel port to {{ xui_panel_port }}
+  ansible.builtin.command:
+    cmd: docker exec 3xui_app /app/x-ui setting -port {{ xui_panel_port }}
+  when: xui_current_port.stdout | trim | int != xui_panel_port
+
+- name: Restart 3x-ui so the new panel port takes effect
+  community.docker.docker_compose_v2:
+    project_src: /home/d.romashov/3x-ui
+    services:
+      - 3xui
+    state: restarted
+  when: xui_current_port.stdout | trim | int != xui_panel_port
