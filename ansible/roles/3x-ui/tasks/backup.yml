@@ -51,3 +51,4 @@
   ansible.builtin.file:
     path: "{{ backup_archive }}"
     state: absent
+  become_user: root

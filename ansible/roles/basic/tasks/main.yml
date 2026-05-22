@@ -63,4 +63,4 @@
         - python3-boto3
       state: present
       update_cache: yes
-    when: "'vpn' in group_names"
+    when: "'vpn' in group_names or '_3xui' in group_names"
