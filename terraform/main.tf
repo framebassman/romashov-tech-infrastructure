@@ -131,6 +131,28 @@ resource "oci_core_network_security_group_security_rule" "sweden_inbound_otlp_ht
   }
 }
 
+# Vault on sweden1 listens plain HTTP; Cloudflare fronts vault.romashov.tech
+# (proxied=true) and connects to the origin over HTTP in SSL mode "Flexible".
+# Client-facing TLS terminates at CF's edge with the Universal cert.
+# Trade-off: the CF→origin leg is plaintext over the public internet;
+# acceptable here because this Vault is a backup secret store (primary is
+# Cloudflare KV) and Vault's own auth is the real access control regardless.
+resource "oci_core_network_security_group_security_rule" "sweden_inbound_http_vault" {
+  network_security_group_id = oci_core_network_security_group.sweden_inbound.id
+  direction                 = "INGRESS"
+  protocol                  = "6" # TCP
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  description               = "HTTP for Vault (Cloudflare-fronted, Flexible SSL mode)"
+
+  tcp_options {
+    destination_port_range {
+      min = 80
+      max = 80
+    }
+  }
+}
+
 # Бюджет $5 и алерт при достижении (для контроля расходов при PAYG)
 resource "oci_budget_budget" "monthly_limit" {
   compartment_id = var.oci_tenancy_ocid
