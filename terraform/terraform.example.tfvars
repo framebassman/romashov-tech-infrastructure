@@ -1,3 +1,6 @@
+vdsina_ru_api_token  = ""
+vdsina_com_api_token = ""
+
 aiven_api_token = ""
 
 project_name               = "romashov-tech"

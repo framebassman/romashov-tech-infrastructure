@@ -131,7 +131,7 @@ cat ~/.ssh/github_actions_id_rsa.pub   # add to GitHub repo Deploy Keys
 
 - Do not run `ansible-playbook` against real inventory without `--check`
   unless explicitly told to in the current turn.
-- Do not run `terraform apply / destroy / state mv / state rm` without
+- Do not run `make apply` or `terraform apply / destroy / state mv / state rm` without
   explicit OK in the current turn.
 - Do not add `apply-*` CI jobs that run against prod without a manual
   approval gate.
