@@ -104,18 +104,35 @@ resource "oci_core_subnet" "default_vcn" {
 module "oci_vm" {
   source    = "./modules/oci-vm/"
   subnet_id = oci_core_subnet.default_vcn.id
+  nsg_ids   = [oci_core_network_security_group.sweden_inbound.id]
 
   depends_on = [module.oci_iam]
 }
 
-# NSG kept here so terraform can detach it from the VNIC in this apply
-# without also racing the NSG delete (which fails while the VNIC still
-# references it). The follow-up PR will remove this empty NSG once the
-# detach has landed.
+# Hosts the OTLP/HTTP receiver port (4318) for Grafana Alloy. Ingress is
+# restricted to node2 (RU) — the only client that pushes traces. Subnet's
+# default security list still only allows :22 + ICMP; NSG UNIONs with it.
 resource "oci_core_network_security_group" "sweden_inbound" {
   compartment_id = local.oci_compartment_id
   vcn_id         = data.oci_core_vcns.default.virtual_networks[0].id
   display_name   = "sweden-inbound"
+}
+
+# node2.romashov.tech (RU edge running Traefik) -> Alloy OTLP receiver.
+resource "oci_core_network_security_group_security_rule" "sweden_inbound_otlp_http_from_node2" {
+  network_security_group_id = oci_core_network_security_group.sweden_inbound.id
+  direction                 = "INGRESS"
+  protocol                  = "6" # TCP
+  source                    = "109.172.90.19/32"
+  source_type               = "CIDR_BLOCK"
+  description               = "OTLP/HTTP from node2 Traefik tracing"
+
+  tcp_options {
+    destination_port_range {
+      min = 4318
+      max = 4318
+    }
+  }
 }
 
 # Бюджет $5 и алерт при достижении (для контроля расходов при PAYG)
