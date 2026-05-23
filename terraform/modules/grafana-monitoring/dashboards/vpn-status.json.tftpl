@@ -18,7 +18,7 @@
     {
       "id": 1,
       "type": "status-history",
-      "title": "VLESS endpoints",
+      "title": "VLESS сервера",
       "gridPos": { "h": 5, "w": 24, "x": 0, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
@@ -77,7 +77,7 @@
     {
       "id": 2,
       "type": "status-history",
-      "title": "Openconnect nodes",
+      "title": "OpenConnect сервера",
       "gridPos": { "h": 8, "w": 18, "x": 0, "y": 7 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
@@ -128,7 +128,7 @@
     {
       "id": 3,
       "type": "stat",
-      "title": "Certificate (dash.romashov.tech)",
+      "title": "Сертификат (dash.romashov.tech)",
       "gridPos": { "h": 8, "w": 6, "x": 18, "y": 7 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
@@ -137,7 +137,7 @@
           "editorMode": "code",
           "expr": "(min(probe_ssl_earliest_cert_expiry{job=\"dash\"}) - time()) / 86400",
           "instant": true,
-          "legendFormat": "days remaining",
+          "legendFormat": "дней осталось",
           "range": false,
           "refId": "A"
         }
