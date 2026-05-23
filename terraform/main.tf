@@ -51,12 +51,13 @@ module "vdsina_com" {
   vdsina_api_token = var.vdsina_com_api_token
 }
 
+# Retained as an empty shell so the aiven provider configuration nested
+# inside the module stays instantiated while terraform destroys the orphaned
+# module.aiven_mysql.* state entries on this apply. Remove the module call
+# and the directory in the follow-up PR after this destroy completes.
 module "aiven_mysql" {
-  source                         = "./modules/aiven-mysql/"
-  aiven_api_token                = var.aiven_api_token
-  project_name                   = var.project_name
-  mysql_avnadmin_user_password   = var.mysql_avnadmin_user_password
-  mysql_monitoring_user_password = var.mysql_monitoring_user_password
+  source          = "./modules/aiven-mysql/"
+  aiven_api_token = var.aiven_api_token
 }
 
 module "aiven_postgres" {

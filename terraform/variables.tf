@@ -7,16 +7,6 @@ variable "project_name" {
   description = "Aiven console project name"
   type        = string
 }
-variable "mysql_avnadmin_user_password" {
-  description = "Password for MySQL avnadmin user"
-  type        = string
-}
-
-variable "mysql_monitoring_user_password" {
-  description = "Password for MySQL monitoring-user"
-  type        = string
-}
-
 variable "pg_avnadmin_user_password" {
   description = "Password for Postgres avnadmin user"
   type        = string
