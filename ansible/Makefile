@@ -26,10 +26,6 @@ deploy-3x-ui:
 	make requirements
 	ansible-playbook playbooks/deploy-3x-ui.yml
 
-deploy-monitoring:
-	make requirements
-	ansible-playbook playbooks/deploy-monitoring.yml
-
 deploy-grafana-alloy:
 	make requirements
 	ansible-playbook playbooks/deploy-grafana-alloy.yml \

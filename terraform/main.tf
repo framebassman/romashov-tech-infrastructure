@@ -9,6 +9,10 @@ terraform {
       source  = "oracle/oci"
       version = "~> 8"
     }
+    grafana = {
+      source  = "grafana/grafana"
+      version = "~> 3"
+    }
   }
 
   backend "s3" {
@@ -32,8 +36,9 @@ variable "account_id" { default = "4faf2c3b5dd13669f97dd976498ad56a" }
 provider "cloudflare" {}
 
 module "cloudflare" {
-  source     = "./modules/cloudflare/"
-  account_id = var.account_id
+  source              = "./modules/cloudflare/"
+  account_id          = var.account_id
+  status_redirect_url = module.grafana_monitoring.public_status_page_url
 }
 
 module "vdsina_ru" {
@@ -154,4 +159,20 @@ resource "oci_budget_alert_rule" "at_5_usd" {
   type           = "ACTUAL"
   message        = "OCI spend has reached $5 this month. Check Cost Analysis in Console."
   recipients     = "dmitry@romashov.tech"
+}
+
+# ── Grafana Cloud (Synthetic Monitoring + Alerting) ──────────────────────────
+# Replaces self-hosted Uptime Kuma on node1. See modules/grafana-monitoring/README.md.
+provider "grafana" {
+  url             = "https://${var.grafana_stack_slug}.grafana.net"
+  auth            = var.grafana_cloud_api_key
+  sm_url          = "https://synthetic-monitoring-api-eu-west-2.grafana.net"
+  sm_access_token = var.grafana_synthetic_monitoring_token
+}
+
+module "grafana_monitoring" {
+  source          = "./modules/grafana-monitoring/"
+  stack_slug      = var.grafana_stack_slug
+  slack_bot_token = var.slack_grafana_bot_token
+  slack_channel   = "general"
 }

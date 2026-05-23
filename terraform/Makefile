@@ -26,7 +26,6 @@ import-cf:
 	-terraform import 'module.cloudflare.cloudflare_record.a_dash' '6d25afe4e74dea9603251aae7971f49f/46706dd6b9a124723e51af04898d14bb'
 	-terraform import 'module.cloudflare.cloudflare_record.a_in_3x' '6d25afe4e74dea9603251aae7971f49f/09a4c5fc355933fd434743df072cf177'
 	-terraform import 'module.cloudflare.cloudflare_record.a_in' '6d25afe4e74dea9603251aae7971f49f/5a9f66e83cf050c916a773a74515b6dc'
-	-terraform import 'module.cloudflare.cloudflare_record.a_monitoring' '6d25afe4e74dea9603251aae7971f49f/3ecffa9f27210bd66cb40e3a7656ffea'
 	-terraform import 'module.cloudflare.cloudflare_record.a_node1' '6d25afe4e74dea9603251aae7971f49f/ae6f92f1f8a0cc9cfab7627f23a7db1b'
 	-terraform import 'module.cloudflare.cloudflare_record.a_node2' '6d25afe4e74dea9603251aae7971f49f/d4b4902abe137ac4fc1e87d88cab4047'
 	-terraform import 'module.cloudflare.cloudflare_record.a_node3' '6d25afe4e74dea9603251aae7971f49f/c103e840258747878e5f73425219ed3e'

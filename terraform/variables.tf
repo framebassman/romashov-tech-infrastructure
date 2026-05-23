@@ -83,3 +83,28 @@ variable "oci_private_key" {
   type        = string
   sensitive   = true
 }
+
+# Grafana Cloud — used by modules/grafana-monitoring
+variable "grafana_stack_slug" {
+  description = "Grafana Cloud stack slug (the <slug>.grafana.net subdomain)"
+  type        = string
+  default     = "romashovtech"
+}
+
+variable "grafana_cloud_api_key" {
+  description = "Grafana Cloud Access Policy token with stacks:read + alerts:write + datasources:read scopes. Used as the grafana provider 'auth'."
+  type        = string
+  sensitive   = true
+}
+
+variable "grafana_synthetic_monitoring_token" {
+  description = "Grafana Synthetic Monitoring access token (generated in SM → Config after plugin install)."
+  type        = string
+  sensitive   = true
+}
+
+variable "slack_grafana_bot_token" {
+  description = "Slack Bot User OAuth Token (xoxb-...) for the Grafana Alerts custom Slack app."
+  type        = string
+  sensitive   = true
+}
