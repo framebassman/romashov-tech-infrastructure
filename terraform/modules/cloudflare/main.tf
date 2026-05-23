@@ -18,7 +18,7 @@ resource "cloudflare_record" "a_alloy" {
   zone_id = local.zone_id
   name    = "alloy"
   type    = "A"
-  content = "79.76.37.36"
+  content = var.alloy_public_ip
   proxied = false
   ttl     = 1
 }
@@ -162,6 +162,23 @@ resource "cloudflare_record" "a_vault" {
   content = "109.172.90.19"
   proxied = true
   ttl     = 1
+}
+
+# Zone-wide SSL mode. Originally added by the (now-closed) DNS-flip-to-sweden
+# PR which moved vault.romashov.tech to sweden1 over HTTP. That migration is
+# paused (A1.Flex capacity in Stockholm AD-1 is exhausted), but the override
+# resource was created in state by that PR's CI apply. Declaring it here
+# keeps state and code consistent so terraform doesn't try to destroy it —
+# Cloudflare's Free plan rejects writes to some read-only settings on destroy,
+# which made the destroy path unrecoverable. Flexible SSL is fine for the
+# current zone setup: a_vault is the only externally-hosted proxied record,
+# and Traefik on node2 has http-point with auto-redirect to https-point, so
+# CF→node2 over HTTP works.
+resource "cloudflare_zone_settings_override" "romashov_tech" {
+  zone_id = local.zone_id
+  settings {
+    ssl = "flexible"
+  }
 }
 
 resource "cloudflare_record" "a_vpn" {

@@ -36,8 +36,9 @@ variable "account_id" { default = "4faf2c3b5dd13669f97dd976498ad56a" }
 provider "cloudflare" {}
 
 module "cloudflare" {
-  source     = "./modules/cloudflare/"
-  account_id = var.account_id
+  source          = "./modules/cloudflare/"
+  account_id      = var.account_id
+  alloy_public_ip = module.oci_vm.instance_public_ip
 }
 
 module "vdsina_ru" {
