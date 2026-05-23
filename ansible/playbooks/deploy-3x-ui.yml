@@ -3,7 +3,7 @@
   become: true
   become_user: d.romashov
   vars:
-    application: 3xui
+    application: "3x-ui-{{ direction }}"
     project_path: "/home/d.romashov/romashov-tech"
   roles:
-    - 3x-ui
+    - romashov-tech-deployment
