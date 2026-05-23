@@ -90,6 +90,16 @@ module "oci_vm" {
   depends_on = [module.oci_iam]
 }
 
+# NSG kept here so terraform can detach it from the VNIC in this apply
+# without also racing the NSG delete (which fails while the VNIC still
+# references it). The follow-up PR will remove this empty NSG once the
+# detach has landed.
+resource "oci_core_network_security_group" "sweden_inbound" {
+  compartment_id = local.oci_compartment_id
+  vcn_id         = data.oci_core_vcns.default.virtual_networks[0].id
+  display_name   = "sweden-inbound"
+}
+
 # Бюджет $5 и алерт при достижении (для контроля расходов при PAYG)
 resource "oci_budget_budget" "monthly_limit" {
   compartment_id = var.oci_tenancy_ocid
