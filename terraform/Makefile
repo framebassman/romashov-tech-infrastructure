@@ -69,11 +69,6 @@ import:
 	-terraform import module.vdsina_com.vdsina_server.node1 598372
 	-terraform import module.vdsina_com.vdsina_server.out_3x 820792
 	@echo "--- Aiven ---"
-	-terraform import module.aiven_mysql.aiven_mysql.this romashov-tech/kolenka-inc-mysql
-	-terraform import module.aiven_mysql.aiven_mysql_database.defaultdb romashov-tech/kolenka-inc-mysql/defaultdb
-	-terraform import module.aiven_mysql.aiven_mysql_user.avnadmin romashov-tech/kolenka-inc-mysql/avnadmin
-	-terraform import module.aiven_mysql.aiven_mysql_database.monitoring romashov-tech/kolenka-inc-mysql/monitoring
-	-terraform import module.aiven_mysql.aiven_mysql_user.monitoring_user romashov-tech/kolenka-inc-mysql/monitoring-user
 	-terraform import module.aiven_postgres.aiven_pg.this romashov-tech/romashov-tech-postgres
 	-terraform import module.aiven_postgres.aiven_pg_database.postgres romashov-tech/romashov-tech-postgres/postgres
 	-terraform import module.aiven_postgres.aiven_pg_database.defaultdb romashov-tech/romashov-tech-postgres/defaultdb

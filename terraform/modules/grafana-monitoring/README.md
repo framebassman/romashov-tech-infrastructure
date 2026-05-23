@@ -41,13 +41,6 @@ rule, and Slack routing are generated from `for_each`, so no copy-paste.
 
 ## Decommissioning Uptime Kuma
 
-After `terraform apply` and a verified end-to-end alert (manually break one
-probe target, watch Slack message), stop the container on node1:
-
-```bash
-cd /home/d.romashov/romashov-tech
-make stop-prod-monitoring
-```
-
-The Aiven MariaDB DB `monitoring` (used by Kuma) can be dropped via the
-`aiven-mysql` module once you're sure you don't want Kuma's historical data.
+Replaced by the public Grafana Cloud dashboard. The Kuma container on node1
+and the Aiven MySQL service `kolenka-inc-mysql` (which backed it) have both
+been removed.
