@@ -36,9 +36,8 @@ variable "account_id" { default = "4faf2c3b5dd13669f97dd976498ad56a" }
 provider "cloudflare" {}
 
 module "cloudflare" {
-  source              = "./modules/cloudflare/"
-  account_id          = var.account_id
-  status_redirect_url = module.grafana_monitoring.public_status_page_url
+  source     = "./modules/cloudflare/"
+  account_id = var.account_id
 }
 
 module "vdsina_ru" {
