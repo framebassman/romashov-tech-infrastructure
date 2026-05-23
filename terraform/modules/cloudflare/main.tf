@@ -159,9 +159,22 @@ resource "cloudflare_record" "a_vault" {
   zone_id = local.zone_id
   name    = "vault"
   type    = "A"
-  content = "109.172.90.19"
+  content = "79.76.37.36"
   proxied = true
   ttl     = 1
+}
+
+# Vault on sweden1 listens plain HTTP only. SSL mode "Flexible" tells
+# Cloudflare to terminate client TLS at the edge with its Universal cert
+# and connect to the origin over HTTP. This is zone-wide but safe: the only
+# externally-hosted proxied=true record in this zone is a_vault — the rest
+# (a_www dummy, cname_apex → Pages, cname_webhook → Tunnel) point at
+# CF-internal services where SSL mode is meaningless.
+resource "cloudflare_zone_settings_override" "romashov_tech" {
+  zone_id = local.zone_id
+  settings {
+    ssl = "flexible"
+  }
 }
 
 resource "cloudflare_record" "a_vpn" {
