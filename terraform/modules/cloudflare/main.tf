@@ -50,13 +50,34 @@ resource "cloudflare_record" "a_in" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_monitoring" {
+resource "cloudflare_record" "cname_status" {
   zone_id = local.zone_id
-  name    = "monitoring"
-  type    = "A"
-  content = "109.172.90.19"
-  proxied = false
+  name    = "status"
+  type    = "CNAME"
+  content = "romashovtech.grafana.net"
+  # Proxied so the page rule below can rewrite/redirect at CF edge. With
+  # proxied=false the browser would hit grafana.net directly with SNI=
+  # status.romashov.tech and get a cert mismatch (grafana's cert is *.grafana.net).
+  proxied = true
   ttl     = 1
+}
+
+# 302 redirect: status.romashov.tech/* -> the full public-dashboard URL.
+# Required because Grafana Cloud doesn't support custom domains on Free/Pro
+# tiers (Enterprise only); the cleanest fallback for a vanity status URL is
+# an HTTP-level redirect at the CF edge.
+resource "cloudflare_page_rule" "status_redirect" {
+  zone_id  = local.zone_id
+  target   = "status.romashov.tech/*"
+  priority = 1
+  status   = "active"
+
+  actions {
+    forwarding_url {
+      url         = var.status_redirect_url
+      status_code = 302
+    }
+  }
 }
 
 resource "cloudflare_record" "a_node1" {

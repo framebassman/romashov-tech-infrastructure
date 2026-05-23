@@ -45,7 +45,6 @@ copy the GitHub deploy key onto the host before first deploy.
 | `vpn`        | 91.84.124.164 + 109.172.90.19        | openconnect ocserv hosts                               |
 | `mtproxy`    | 91.84.124.164                        | telegram mtproxy                                       |
 | `_3xui`      | 109.172.90.19 + 185.121.233.152      | host var `direction: in|out` picks compose-profile      |
-| `monitoring` | 91.84.124.164                        | uptime-kuma                                            |
 
 Every host has `fqdn` set in inventory — roles assume it.
 

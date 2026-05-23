@@ -1,0 +1,240 @@
+{
+  "annotations": { "list": [] },
+  "description": "Public status page replacing Uptime Kuma's status/vpn",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "panels": [],
+      "title": "VLESS",
+      "type": "row"
+    },
+    {
+      "id": 1,
+      "type": "status-history",
+      "title": "VLESS endpoints",
+      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 1 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "min by(job)(min_over_time(probe_success{job=~\"3x-ui-in|3x-ui-out\"}[10m]))",
+          "interval": "10m",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red", "index": 0 },
+                "1": { "text": "UP", "color": "green", "index": 1 }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0
+          }
+        }
+      },
+      "options": {
+        "colWidth": 0.95,
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "rowHeight": 0.85,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" },
+        "alignValue": "center"
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "id": 101,
+      "panels": [],
+      "title": "Cisco Secure Connect / Cisco AnyConnect",
+      "type": "row"
+    },
+    {
+      "id": 2,
+      "type": "status-history",
+      "title": "Openconnect nodes",
+      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 7 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "min by(job)(min_over_time(probe_success{job=~\"node[1-4]\"}[10m]))",
+          "interval": "10m",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red", "index": 0 },
+                "1": { "text": "UP", "color": "green", "index": 1 }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0
+          }
+        }
+      },
+      "options": {
+        "colWidth": 0.95,
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "rowHeight": 0.85,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" },
+        "alignValue": "center"
+      }
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Certificate (dash.romashov.tech)",
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 7 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "(min(probe_ssl_earliest_cert_expiry{job=\"dash\"}) - time()) / 86400",
+          "instant": true,
+          "legendFormat": "days remaining",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "unit": "d",
+          "decimals": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "yellow", "value": 7 },
+              { "color": "green", "value": 14 }
+            ]
+          }
+        }
+      },
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "textMode": "value_and_name"
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+      "id": 102,
+      "panels": [],
+      "title": "Telegram",
+      "type": "row"
+    },
+    {
+      "id": 4,
+      "type": "status-history",
+      "title": "MTProxy (tg.romashov.tech)",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 16 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "min by(job)(min_over_time(probe_success{job=\"mtproxy\"}[10m]))",
+          "interval": "10m",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red", "index": 0 },
+                "1": { "text": "UP", "color": "green", "index": 1 }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "custom": {
+            "fillOpacity": 90,
+            "lineWidth": 0
+          }
+        }
+      },
+      "options": {
+        "colWidth": 0.95,
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": false },
+        "rowHeight": 0.85,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" },
+        "alignValue": "center"
+      }
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 39,
+  "tags": ["status-page", "synthetic-monitoring", "from-uptime-kuma"],
+  "templating": { "list": [] },
+  "time": { "from": "now-12h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "VPN инциденты",
+  "uid": "vpn-status",
+  "version": 1,
+  "weekStart": ""
+}
