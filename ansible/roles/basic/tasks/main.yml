@@ -10,6 +10,12 @@
       - curl
       - mc
       - make
+      # acl: lets ansible's become_user share temp files between unrelated
+      # users via POSIX ACLs (setfacl). Without it, `become: true,
+      # become_user: <non-root>` over an ubuntu-cloud SSH login fails with
+      # `chmod: invalid mode: 'A+user:...:rx:allow'`. Hit on the fresh OCI
+      # Ubuntu image (minimal — strips acl); vdsina hosts already had it.
+      - acl
 
   - name: Adding bashrc
     copy: src=../files/bash.bashrc dest=/etc/bash.bashrc
