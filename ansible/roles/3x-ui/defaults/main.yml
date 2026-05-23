@@ -1,0 +1,4 @@
+---
+# Number of newest backup archives to keep in R2 for each host's prefix.
+# Used by tasks/backup.yml when pruning old objects.
+backup_retention_count: 5
