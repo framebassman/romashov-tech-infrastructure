@@ -28,6 +28,14 @@ terraform {
 
 variable "account_id" { default = "4faf2c3b5dd13669f97dd976498ad56a" }
 
+# api_token is read from CLOUDFLARE_API_TOKEN env var (exported in Makefile from /etc/environment)
+provider "cloudflare" {}
+
+module "cloudflare" {
+  source     = "./modules/cloudflare/"
+  account_id = var.account_id
+}
+
 module "vdsina_ru" {
   source           = "./modules/vdsina-ru/"
   vdsina_api_token = var.vdsina_ru_api_token
