@@ -50,34 +50,19 @@ resource "cloudflare_record" "a_in" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "cname_status" {
+# status.romashov.tech → node2 (RU). Traefik on node2 reverse-proxies to
+# romashovtech.grafana.net (see services/proxy/config/dynamic/status.yml in
+# the application repo). Previously this was a proxied CNAME → grafana.net
+# plus a CF page_rule 302 to the dashboard URL; both were dropped because
+# RU clients couldn't follow the redirect (grafana.net unreachable on most
+# RU ISPs).
+resource "cloudflare_record" "a_status" {
   zone_id = local.zone_id
   name    = "status"
-  type    = "CNAME"
-  content = "romashovtech.grafana.net"
-  # Proxied so the page rule below can rewrite/redirect at CF edge. With
-  # proxied=false the browser would hit grafana.net directly with SNI=
-  # status.romashov.tech and get a cert mismatch (grafana's cert is *.grafana.net).
-  proxied = true
+  type    = "A"
+  content = "109.172.90.19"
+  proxied = false
   ttl     = 1
-}
-
-# 302 redirect: status.romashov.tech/* -> the full public-dashboard URL.
-# Required because Grafana Cloud doesn't support custom domains on Free/Pro
-# tiers (Enterprise only); the cleanest fallback for a vanity status URL is
-# an HTTP-level redirect at the CF edge.
-resource "cloudflare_page_rule" "status_redirect" {
-  zone_id  = local.zone_id
-  target   = "status.romashov.tech/*"
-  priority = 1
-  status   = "active"
-
-  actions {
-    forwarding_url {
-      url         = var.status_redirect_url
-      status_code = 302
-    }
-  }
 }
 
 resource "cloudflare_record" "a_node1" {
