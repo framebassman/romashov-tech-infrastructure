@@ -1,5 +1,5 @@
 ---
-- hosts: sweden
+- hosts: monitoring
   become: true
   become_user: d.romashov
   vars:
