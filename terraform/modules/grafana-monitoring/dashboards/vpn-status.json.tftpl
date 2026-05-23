@@ -137,7 +137,7 @@
           "editorMode": "code",
           "expr": "(min(probe_ssl_earliest_cert_expiry{job=\"dash\"}) - time()) / 86400",
           "instant": true,
-          "legendFormat": "дней осталось",
+          "legendFormat": "будет работать ещё",
           "range": false,
           "refId": "A"
         }
@@ -145,7 +145,7 @@
       "fieldConfig": {
         "defaults": {
           "color": { "mode": "thresholds" },
-          "unit": "d",
+          "unit": " дней",
           "decimals": 0,
           "thresholds": {
             "mode": "absolute",
