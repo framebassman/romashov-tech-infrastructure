@@ -43,11 +43,9 @@
     when: cloudflare_api_token is defined and cloudflare_api_token | length > 0
     no_log: true
 
-  - name: Stop Deployment
-    shell: "make stop-prod-{{ application }}"
-    args:
-      chdir: "{{ project_path }}"
-
+  # No `docker compose down` before `up -d`: avoids 5-15s outage on every deploy.
+  # Volume-mounted dynamic config changes hot-reload via the container's own watcher (e.g. traefik file provider).
+  # Real compose/image/env changes still recreate the container in place via `up -d`, but without the idle gap of `down`+`up`.
   - name: Start Deployment
     shell: "make start-prod-{{ application }}"
     args:
