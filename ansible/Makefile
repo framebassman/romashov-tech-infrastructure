@@ -15,7 +15,8 @@ deploy-vault:
 
 deploy-proxy:
 	make requirements
-	ansible-playbook playbooks/deploy-proxy.yml
+	ansible-playbook playbooks/deploy-proxy.yml \
+		--extra-vars cloudflare_api_token=$${CLOUDFLARE_API_TOKEN}
 
 deploy-mtproxy:
 	make requirements
@@ -28,6 +29,11 @@ deploy-3x-ui:
 deploy-monitoring:
 	make requirements
 	ansible-playbook playbooks/deploy-monitoring.yml
+
+deploy-grafana-alloy:
+	make requirements
+	ansible-playbook playbooks/deploy-grafana-alloy.yml \
+		--extra-vars cloudflare_api_token=$${CLOUDFLARE_API_TOKEN}
 
 backup-3x-ui:
 	make requirements
