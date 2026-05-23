@@ -28,6 +28,16 @@ terraform {
 
 variable "account_id" { default = "4faf2c3b5dd13669f97dd976498ad56a" }
 
+module "vdsina_ru" {
+  source           = "./modules/vdsina-ru/"
+  vdsina_api_token = var.vdsina_ru_api_token
+}
+
+module "vdsina_com" {
+  source           = "./modules/vdsina-com/"
+  vdsina_api_token = var.vdsina_com_api_token
+}
+
 module "aiven_mysql" {
   source                         = "./modules/aiven-mysql/"
   aiven_api_token                = var.aiven_api_token

@@ -47,6 +47,18 @@ variable "pg_mtproxy_user_password" {
   type        = string
 }
 
+variable "vdsina_ru_api_token" {
+  description = "VDSina.ru API token"
+  type        = string
+  sensitive   = true
+}
+
+variable "vdsina_com_api_token" {
+  description = "VDSina.com API token"
+  type        = string
+  sensitive   = true
+}
+
 # OCI (аутентификация через переменные в terraform.tfvars / backend.conf)
 variable "oci_tenancy_ocid" {
   description = "OCI tenancy OCID"
