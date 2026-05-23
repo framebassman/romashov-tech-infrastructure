@@ -18,7 +18,7 @@ resource "cloudflare_record" "a_alloy" {
   zone_id = local.zone_id
   name    = "alloy"
   type    = "A"
-  content = "79.76.37.36"
+  content = var.alloy_public_ip
   proxied = false
   ttl     = 1
 }

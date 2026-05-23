@@ -8,7 +8,13 @@ terraform {
 }
 
 locals {
-  compartment_id             = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
+  compartment_id = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
+  # Stuck on VM.Standard.E2.1.Micro (1/8 OCPU + 1 GB RAM) because Stockholm
+  # AD-1 currently has no VM.Standard.A1.Flex (ARM) capacity. The original
+  # plan was to migrate sweden to A1 (per-tenancy quota is fine: 4 OCPU +
+  # 24 GB unused) but capacity is regionally exhausted. Track A1 migration
+  # in the follow-up issue; for now we live within the E2 budget by capping
+  # vault's memory at the docker-compose layer.
   instance_shape             = "VM.Standard.E2.1.Micro"
   shape_config_ocpus         = null
   shape_config_memory_in_gbs = null
@@ -26,6 +32,16 @@ data "oci_core_images" "ubuntu" {
   operating_system         = "Canonical Ubuntu"
   operating_system_version = "22.04"
   shape                    = local.instance_shape
+}
+
+# Marker that flips when instance_shape changes. Used by the instance's
+# lifecycle.replace_triggered_by below so a shape change across CPU families
+# (e.g. AMD E2 → ARM A1) forces destroy+create instead of a doomed in-place
+# update — the OCI provider doesn't mark `shape` as ForceNew, but the OCI
+# control plane will reject in-place resize between fundamentally different
+# architectures.
+resource "terraform_data" "shape_marker" {
+  input = local.instance_shape
 }
 
 resource "oci_core_instance" "this" {
@@ -64,8 +80,12 @@ EOT
     source_id   = data.oci_core_images.ubuntu.images[0].id
   }
 
-  # После import не менять образ существующей VM (subnet не игнорируем — нужна замена при смене VCN)
+  # ignore_changes: после import не менять образ существующей VM (subnet не
+  # игнорируем — нужна замена при смене VCN).
+  # replace_triggered_by: смена shape (поле помечено новой архитектурой через
+  # terraform_data.shape_marker) форсит destroy+create. См. комментарий у marker'а выше.
   lifecycle {
-    ignore_changes = [source_details]
+    ignore_changes       = [source_details]
+    replace_triggered_by = [terraform_data.shape_marker]
   }
 }
