@@ -131,6 +131,27 @@ resource "oci_core_network_security_group_security_rule" "sweden_inbound_otlp_ht
   }
 }
 
+# Vault on sweden1 — terminates TLS itself with a Cloudflare Origin Certificate.
+# Cloudflare fronts vault.romashov.tech (proxied=true) and connects to the
+# origin on :443 in SSL mode "Full (Strict)". Locking to CF IP ranges would be
+# stricter but adds maintenance (CF rotates ranges); TLS + Vault auth are the
+# real access control. Open to 0.0.0.0/0.
+resource "oci_core_network_security_group_security_rule" "sweden_inbound_https_vault" {
+  network_security_group_id = oci_core_network_security_group.sweden_inbound.id
+  direction                 = "INGRESS"
+  protocol                  = "6" # TCP
+  source                    = "0.0.0.0/0"
+  source_type               = "CIDR_BLOCK"
+  description               = "HTTPS for Vault (Cloudflare-fronted, TLS + Vault auth)"
+
+  tcp_options {
+    destination_port_range {
+      min = 443
+      max = 443
+    }
+  }
+}
+
 # Бюджет $5 и алерт при достижении (для контроля расходов при PAYG)
 resource "oci_budget_budget" "monthly_limit" {
   compartment_id = var.oci_tenancy_ocid
