@@ -26,6 +26,10 @@ deploy-3x-ui:
 	make requirements
 	ansible-playbook playbooks/deploy-3x-ui.yml
 
+3x-ui-metrics-firewall:
+	make requirements
+	ansible-playbook playbooks/3x-ui-metrics-firewall.yml
+
 deploy-grafana-alloy:
 	make requirements
 	ansible-playbook playbooks/deploy-grafana-alloy.yml \

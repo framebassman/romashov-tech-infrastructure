@@ -1,0 +1,12 @@
+[Unit]
+Description=Restrict Docker port 9091 (xray-exporter) to Alloy IP (sweden-node)
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/3x-ui-metrics-firewall-docker-user.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

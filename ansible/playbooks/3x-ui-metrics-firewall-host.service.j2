@@ -1,0 +1,12 @@
+[Unit]
+Description=Restrict host port 9091 (xray-exporter) to Alloy IP (sweden-node)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/3x-ui-metrics-firewall-host.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
