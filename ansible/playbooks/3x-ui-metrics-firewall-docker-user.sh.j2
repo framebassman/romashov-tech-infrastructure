@@ -1,14 +1,16 @@
 #!/bin/bash
-# Restrict Docker-published port 9091 (xray-exporter) to Alloy IP only.
+# Restrict Docker-published ports 9091 (xray-exporter) and 9100 (node_exporter) to Alloy IP only.
 # DOCKER-USER chain — same pattern as vpn-firewall-docker-user.sh (port 8000).
 set -e
 ALLOWED_IP="{{ xray_metrics_allowed_source_ip }}"
-PORT=9091
+PORTS=(9091 9100)
 if ! iptables -L DOCKER-USER -n &>/dev/null; then
   echo "DOCKER-USER chain not found (Docker not running?). Skipping." >&2
   exit 0
 fi
-iptables -C DOCKER-USER -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT 2>/dev/null || \
-  iptables -I DOCKER-USER 1 -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT
-iptables -C DOCKER-USER -p tcp --dport "${PORT}" -j DROP 2>/dev/null || \
-  iptables -A DOCKER-USER -p tcp --dport "${PORT}" -j DROP
+for PORT in "${PORTS[@]}"; do
+  iptables -C DOCKER-USER -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT 2>/dev/null || \
+    iptables -I DOCKER-USER 1 -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT
+  iptables -C DOCKER-USER -p tcp --dport "${PORT}" -j DROP 2>/dev/null || \
+    iptables -A DOCKER-USER -p tcp --dport "${PORT}" -j DROP
+done

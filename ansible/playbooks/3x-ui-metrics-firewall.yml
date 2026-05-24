@@ -1,5 +1,5 @@
 ---
-# Restrict xray-exporter (:9091) on 3x-ui nodes to Alloy (sweden) IP only.
+# Restrict xray-exporter (:9091) and node_exporter (:9100) on 3x-ui nodes to Alloy (sweden) IP only.
 #   in  (Docker bridge): DOCKER-USER chain — same model as vpn-firewall.yml :8000
 #   out (host network):  iptables INPUT on the host
 #
