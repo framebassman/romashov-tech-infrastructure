@@ -1,9 +1,11 @@
 #!/bin/bash
-# Restrict host port 9091 (xray-exporter, network_mode: host) to Alloy IP only.
+# Restrict host ports 9091 (xray-exporter) and 9100 (node_exporter, network_mode: host) to Alloy IP only.
 set -e
 ALLOWED_IP="{{ xray_metrics_allowed_source_ip }}"
-PORT=9091
-iptables -C INPUT -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT 2>/dev/null || \
-  iptables -I INPUT 1 -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT
-iptables -C INPUT -p tcp --dport "${PORT}" -j DROP 2>/dev/null || \
-  iptables -A INPUT -p tcp --dport "${PORT}" -j DROP
+PORTS=(9091 9100)
+for PORT in "${PORTS[@]}"; do
+  iptables -C INPUT -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT 2>/dev/null || \
+    iptables -I INPUT 1 -s "${ALLOWED_IP}" -p tcp --dport "${PORT}" -j ACCEPT
+  iptables -C INPUT -p tcp --dport "${PORT}" -j DROP 2>/dev/null || \
+    iptables -A INPUT -p tcp --dport "${PORT}" -j DROP
+done
