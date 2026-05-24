@@ -1,0 +1,81 @@
+---
+# Restrict xray-exporter (:9091) on 3x-ui nodes to Alloy (sweden) IP only.
+#   in  (Docker bridge): DOCKER-USER chain — same model as vpn-firewall.yml :8000
+#   out (host network):  iptables INPUT on the host
+#
+# Run: ansible-playbook -i hosts.yml playbooks/3x-ui-metrics-firewall.yml
+
+- hosts: _3xui
+  become: true
+  vars:
+    xray_metrics_allowed_source_ip: "{{ lookup('dig', groups['sweden'] | first) }}"
+  tasks:
+    - name: Fail if group sweden is missing in inventory
+      ansible.builtin.fail:
+        msg: "Inventory must define group sweden (Alloy host). Check hosts.yml."
+      when: groups['sweden'] | default([]) | length == 0
+
+    - name: Fail if Alloy IP could not be resolved
+      ansible.builtin.fail:
+        msg: "Could not resolve {{ groups['sweden'] | first }} to an IP for firewall rules."
+      when: xray_metrics_allowed_source_ip | length == 0
+
+    # ── in node (Docker) ─────────────────────────────────────────────────────
+    - name: Deploy DOCKER-USER script for port 9091 (in node)
+      ansible.builtin.template:
+        src: 3x-ui-metrics-firewall-docker-user.sh.j2
+        dest: /usr/local/bin/3x-ui-metrics-firewall-docker-user.sh
+        mode: "0755"
+      when: direction == 'in'
+
+    - name: Apply DOCKER-USER rules for port 9091 (in node)
+      ansible.builtin.command:
+        cmd: /usr/local/bin/3x-ui-metrics-firewall-docker-user.sh
+      register: docker_user_xray
+      changed_when: docker_user_xray.rc == 0
+      when: direction == 'in'
+
+    - name: Deploy systemd unit for DOCKER-USER xray metrics (in node)
+      ansible.builtin.template:
+        src: 3x-ui-metrics-firewall-docker-user.service.j2
+        dest: /etc/systemd/system/3x-ui-metrics-firewall-docker-user.service
+        mode: "0644"
+      when: direction == 'in'
+
+    - name: Enable 3x-ui-metrics-firewall-docker-user service (in node)
+      ansible.builtin.systemd:
+        name: 3x-ui-metrics-firewall-docker-user
+        enabled: true
+        state: started
+        daemon_reload: true
+      when: direction == 'in'
+
+    # ── out node (host network) ────────────────────────────────────────────────
+    - name: Deploy host iptables script for port 9091 (out node)
+      ansible.builtin.template:
+        src: 3x-ui-metrics-firewall-host.sh.j2
+        dest: /usr/local/bin/3x-ui-metrics-firewall-host.sh
+        mode: "0755"
+      when: direction == 'out'
+
+    - name: Apply host iptables rules for port 9091 (out node)
+      ansible.builtin.command:
+        cmd: /usr/local/bin/3x-ui-metrics-firewall-host.sh
+      register: host_xray_fw
+      changed_when: host_xray_fw.rc == 0
+      when: direction == 'out'
+
+    - name: Deploy systemd unit for host xray metrics firewall (out node)
+      ansible.builtin.template:
+        src: 3x-ui-metrics-firewall-host.service.j2
+        dest: /etc/systemd/system/3x-ui-metrics-firewall-host.service
+        mode: "0644"
+      when: direction == 'out'
+
+    - name: Enable 3x-ui-metrics-firewall-host service (out node)
+      ansible.builtin.systemd:
+        name: 3x-ui-metrics-firewall-host
+        enabled: true
+        state: started
+        daemon_reload: true
+      when: direction == 'out'
