@@ -8,17 +8,13 @@
 - hosts: _3xui
   become: true
   vars:
-    xray_metrics_allowed_source_ip: "{{ lookup('dig', groups['sweden'] | first) }}"
+    # Same pattern as vpn-firewall.yml — iptables resolves hostname on the host.
+    xray_metrics_allowed_source_ip: "{{ groups['sweden'] | first }}"
   tasks:
     - name: Fail if group sweden is missing in inventory
       ansible.builtin.fail:
         msg: "Inventory must define group sweden (Alloy host). Check hosts.yml."
       when: groups['sweden'] | default([]) | length == 0
-
-    - name: Fail if Alloy IP could not be resolved
-      ansible.builtin.fail:
-        msg: "Could not resolve {{ groups['sweden'] | first }} to an IP for firewall rules."
-      when: xray_metrics_allowed_source_ip | length == 0
 
     # ── in node (Docker) ─────────────────────────────────────────────────────
     - name: Deploy DOCKER-USER script for port 9091 (in node)
