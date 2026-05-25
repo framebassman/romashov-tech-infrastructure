@@ -2,7 +2,9 @@
 # template so we can inject the actual Prometheus datasource UID at render time.
 resource "grafana_dashboard" "vpn_status" {
   config_json = templatefile("${path.module}/dashboards/vpn-status.json.tftpl", {
-    prometheus_uid = data.grafana_data_source.prometheus.uid
+    prometheus_uid  = data.grafana_data_source.prometheus.uid
+    link_gbps       = var.vless_link_gbps
+    link_bits_per_s = var.vless_link_gbps * 1e9
   })
   folder    = grafana_folder.synthetic_monitoring.uid
   overwrite = true
