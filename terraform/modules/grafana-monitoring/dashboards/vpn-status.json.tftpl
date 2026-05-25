@@ -67,8 +67,150 @@
       }
     },
     {
+      "id": 5,
+      "type": "gauge",
+      "title": "IN — загрузка канала",
+      "description": "Пик rx/tx на in.3x vs ${link_gbps} Gbit/s. Зелёный <70%, жёлтый 70–90%, красный >90%.",
+      "gridPos": { "h": 5, "w": 12, "x": 0, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "100 * max(sum(rate(node_network_receive_bytes_total{job=\"node\", instance=\"3x-in\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m])) or sum(rate(node_network_transmit_bytes_total{job=\"node\", instance=\"3x-in\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))) * 8 / ${link_bits_per_s}",
+          "instant": true,
+          "legendFormat": "3x-in",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      }
+    },
+    {
+      "id": 6,
+      "type": "gauge",
+      "title": "OUT — загрузка канала",
+      "description": "Пик rx/tx на out.3x vs ${link_gbps} Gbit/s.",
+      "gridPos": { "h": 5, "w": 12, "x": 12, "y": 6 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "100 * max(sum(rate(node_network_receive_bytes_total{job=\"node\", instance=\"3x-out\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m])) or sum(rate(node_network_transmit_bytes_total{job=\"node\", instance=\"3x-out\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))) * 8 / ${link_bits_per_s}",
+          "instant": true,
+          "legendFormat": "3x-out",
+          "range": false,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "decimals": 1,
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      }
+    },
+    {
+      "id": 7,
+      "type": "timeseries",
+      "title": "Загрузка канала VLESS (24h)",
+      "gridPos": { "h": 6, "w": 24, "x": 0, "y": 11 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "100 * max(sum(rate(node_network_receive_bytes_total{job=\"node\", instance=\"3x-in\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m])) or sum(rate(node_network_transmit_bytes_total{job=\"node\", instance=\"3x-in\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))) * 8 / ${link_bits_per_s}",
+          "legendFormat": "3x-in",
+          "range": true,
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "100 * max(sum(rate(node_network_receive_bytes_total{job=\"node\", instance=\"3x-out\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m])) or sum(rate(node_network_transmit_bytes_total{job=\"node\", instance=\"3x-out\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))) * 8 / ${link_bits_per_s}",
+          "legendFormat": "3x-out",
+          "range": true,
+          "refId": "B"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 15,
+            "lineWidth": 2,
+            "showPoints": "never",
+            "thresholdsStyle": { "mode": "line+area" }
+          },
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "yellow", "value": 70 },
+              { "color": "red", "value": 90 }
+            ]
+          },
+          "unit": "percent"
+        }
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      }
+    },
+    {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 6 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 },
       "id": 101,
       "panels": [],
       "title": "Cisco Secure Connect / Cisco AnyConnect",
@@ -78,7 +220,7 @@
       "id": 2,
       "type": "status-history",
       "title": "OpenConnect сервера",
-      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 7 },
+      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 18 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {
@@ -129,7 +271,7 @@
       "id": 3,
       "type": "stat",
       "title": "Сертификат (dash.romashov.tech)",
-      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 7 },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 18 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {
@@ -168,7 +310,7 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 15 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
       "id": 102,
       "panels": [],
       "title": "Telegram",
@@ -178,7 +320,7 @@
       "id": 4,
       "type": "status-history",
       "title": "MTProxy (tg.romashov.tech)",
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 16 },
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 27 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {

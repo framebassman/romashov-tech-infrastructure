@@ -12,6 +12,8 @@ Uptime Kuma instance on node1.
   Grafana Cloud probes inside Russia.
   - 4 × TCP checks on openconnect VPN ports (`node{1..4}.romashov.tech:4443`)
   - 2 × TCP checks on Reality endpoints (`{in,out}.3x.romashov.tech:443`)
+  - **Public status dashboard** (`vpn-status`) — uptime + VLESS channel utilization
+    gauges (70/90% thresholds, default 10 Gbit/s link via `vless_link_gbps`)
   - 1 × HTTPS check on `dash.romashov.tech` (basic-auth-fronted; 200 + 401
     treated as reachable, since the TLS handshake itself is the signal)
 - **Slack contact point** using a Bot User OAuth Token (`xoxb-…`).

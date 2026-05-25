@@ -89,3 +89,9 @@ variable "cert_expiry_warning_days" {
   type        = number
   default     = 14
 }
+
+variable "vless_link_gbps" {
+  description = "Nominal VPS link speed (Gbit/s) for VLESS channel utilization gauges on the public status dashboard."
+  type        = number
+  default     = 10
+}
