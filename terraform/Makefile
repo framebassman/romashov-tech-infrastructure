@@ -52,7 +52,6 @@ import-cf:
 	-terraform import module.cloudflare.cloudflare_workers_kv_namespace.romashov_tech 4faf2c3b5dd13669f97dd976498ad56a/f0b474a7601c4e16bf88e3e290db5602
 	-terraform import module.cloudflare.cloudflare_pages_project.romashov_tech_web 4faf2c3b5dd13669f97dd976498ad56a/romashov-tech-web
 	-terraform import module.cloudflare.cloudflare_pages_project.romashov_tech_status 4faf2c3b5dd13669f97dd976498ad56a/romashov-tech-status
-	-terraform import module.cloudflare.cloudflare_pages_domain.status_romashov_tech 4faf2c3b5dd13669f97dd976498ad56a/romashov-tech-status/status.romashov.tech
 
 # Импорт: уже импортированные ресурсы могут вернуть ошибку — make продолжит (префикс -)
 import:

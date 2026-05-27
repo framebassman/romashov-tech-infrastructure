@@ -50,15 +50,15 @@ resource "cloudflare_record" "a_in" {
   ttl     = 900
 }
 
-# status.romashov.tech — Cloudflare Pages wrapper (romashov-tech/services/status).
-# Grafana paths (/public-dashboards/*, /public/*, /api/*) must still reach node2
-# via a Configuration Rule / Worker (see services/status/README.md).
-resource "cloudflare_record" "cname_status" {
+# status.romashov.tech → node2 (RU). Traefik reverse-proxies to Cloudflare Pages
+# (static wrapper) and Grafana Cloud (dashboard paths). Direct DNS to Pages is
+# avoided—many RU ISPs block *.pages.dev; see services/proxy/config/dynamic/status.yml.
+resource "cloudflare_record" "a_status" {
   zone_id = local.zone_id
   name    = "status"
-  type    = "CNAME"
-  content = "romashov-tech-status.pages.dev"
-  proxied = true
+  type    = "A"
+  content = "109.172.90.19"
+  proxied = false
   ttl     = 1
 }
 
@@ -305,14 +305,4 @@ resource "cloudflare_pages_project" "romashov_tech_status" {
   production_branch = "master"
 
   lifecycle { ignore_changes = [source, build_config, deployment_configs] }
-}
-
-# Custom domain for status Pages (DNS: cloudflare_record.cname_status above).
-# pages_domain does not create the CNAME — both resources are required.
-resource "cloudflare_pages_domain" "status_romashov_tech" {
-  account_id   = var.account_id
-  project_name = cloudflare_pages_project.romashov_tech_status.name
-  domain       = "status.romashov.tech"
-
-  depends_on = [cloudflare_record.cname_status]
 }
