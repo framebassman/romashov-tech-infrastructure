@@ -50,12 +50,9 @@ resource "cloudflare_record" "a_in" {
   ttl     = 900
 }
 
-# status.romashov.tech → node2 (RU). Traefik on node2 reverse-proxies to
-# romashovtech.grafana.net (see services/proxy/config/dynamic/status.yml in
-# the application repo). Previously this was a proxied CNAME → grafana.net
-# plus a CF page_rule 302 to the dashboard URL; both were dropped because
-# RU clients couldn't follow the redirect (grafana.net unreachable on most
-# RU ISPs).
+# status.romashov.tech → node2 (RU). Traefik reverse-proxies to Cloudflare Pages
+# (static wrapper) and Grafana Cloud (dashboard paths). Direct DNS to Pages is
+# avoided—many RU ISPs block *.pages.dev; see services/proxy/config/dynamic/status.yml.
 resource "cloudflare_record" "a_status" {
   zone_id = local.zone_id
   name    = "status"
@@ -299,5 +296,13 @@ resource "cloudflare_pages_project" "romashov_tech_web" {
   production_branch = "master"
 
   # GitHub integration, env vars, and build config are managed outside TF
+  lifecycle { ignore_changes = [source, build_config, deployment_configs] }
+}
+
+resource "cloudflare_pages_project" "romashov_tech_status" {
+  account_id        = var.account_id
+  name              = "romashov-tech-status"
+  production_branch = "master"
+
   lifecycle { ignore_changes = [source, build_config, deployment_configs] }
 }
