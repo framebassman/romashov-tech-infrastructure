@@ -306,3 +306,9 @@ resource "cloudflare_pages_project" "romashov_tech_status" {
 
   lifecycle { ignore_changes = [source, build_config, deployment_configs] }
 }
+
+# Incident banners for status.romashov.tech (read via Pages Function, written from CI).
+resource "cloudflare_d1_database" "romashov_tech_status_incidents" {
+  account_id = var.account_id
+  name       = "romashov-tech-status-incidents"
+}
