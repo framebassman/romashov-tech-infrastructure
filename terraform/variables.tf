@@ -1,7 +1,3 @@
-variable "project_name" {
-  description = "Aiven console project name"
-  type        = string
-}
 
 # OCI (аутентификация через переменные в terraform.tfvars / backend.conf)
 variable "oci_tenancy_ocid" {
@@ -20,12 +16,6 @@ variable "oci_fingerprint" {
   description = "Fingerprint of the OCI API key (идентификатор ключа, не секрет)"
   type        = string
   default     = "e9:16:a2:8f:7b:7f:ef:29:a8:4d:f8:c5:a3:1f:be:c0"
-}
-
-variable "oci_private_key" {
-  description = "OCI API private key PEM file"
-  type        = string
-  sensitive   = true
 }
 
 # Grafana Cloud — used by modules/grafana-monitoring

@@ -58,7 +58,7 @@ module "vdsina_com" {
 module "aiven" {
   source                     = "./modules/aiven/"
   aiven_api_token            = data.external.aiven_api_token.result.value
-  project_name               = var.project_name
+  project_name               = "romashov-tech"
   pg_avnadmin_user_password  = data.external.pg_avnadmin_user_password.result.value
   pg_foodikal_user_password  = data.external.pg_foodikal_user_password.result.value
   pg_inventory_user_password = data.external.pg_inventory_user_password.result.value
@@ -72,7 +72,7 @@ provider "oci" {
   tenancy_ocid = var.oci_tenancy_ocid
   user_ocid    = var.oci_user_ocid
   fingerprint  = var.oci_fingerprint
-  private_key  = var.oci_private_key
+  private_key  = data.external.oci_private_key.result.value
   region       = "eu-stockholm-1"
 }
 
@@ -118,6 +118,10 @@ data "external" "pg_outline_user_password" {
 
 data "external" "pg_vault_user_password" {
   program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_vault_user_password\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "oci_private_key" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/oci_private_key\" | jq -Rs '{value: .}'"]
 }
 
 data "external" "pg_mtproxy_user_password" {

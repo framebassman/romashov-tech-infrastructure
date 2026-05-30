@@ -17,10 +17,8 @@ jobs:
       - name: Populate secrets
         run: |
           echo $BACKEND_CONF_BASE64 | base64 --decode > backend.conf
-          echo $TERRAFORM_TFVARS_BASE64 | base64 --decode > terraform.tfvars
         env:
           BACKEND_CONF_BASE64: ${{ secrets.BACKEND_CONF_BASE64 }}
-          TERRAFORM_TFVARS_BASE64: ${{ secrets.TERRAFORM_TFVARS_BASE64 }}
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: "1.14.6"
