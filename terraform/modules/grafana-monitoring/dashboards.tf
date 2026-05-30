@@ -14,6 +14,7 @@ resource "grafana_dashboard" "vpn_status" {
 resource "grafana_dashboard_public" "vpn_status" {
   dashboard_uid = grafana_dashboard.vpn_status.uid
   is_enabled    = true
+  share         = "public"
 
   # Time selection picker on a public dashboard is usually noise for a
   # status page; the dashboard auto-refreshes every 5 min and is meant to
