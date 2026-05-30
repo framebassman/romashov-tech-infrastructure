@@ -5,16 +5,15 @@ locals {
 # ── Zone ─────────────────────────────────────────────────────────────────────
 
 resource "cloudflare_zone" "romashov_tech" {
-  account_id = var.account_id
-  zone       = "romashov.tech"
-  plan       = "free"
-  # jump_start is a creation-time flag only
-  lifecycle { ignore_changes = [jump_start] }
+  account = {
+    id = var.account_id
+  }
+  name = "romashov.tech"
 }
 
 # ── DNS — A records ───────────────────────────────────────────────────────────
 
-resource "cloudflare_record" "a_alloy" {
+resource "cloudflare_dns_record" "a_alloy" {
   zone_id = local.zone_id
   name    = "alloy"
   type    = "A"
@@ -23,7 +22,7 @@ resource "cloudflare_record" "a_alloy" {
   ttl     = 1
 }
 
-resource "cloudflare_record" "a_dash" {
+resource "cloudflare_dns_record" "a_dash" {
   zone_id = local.zone_id
   name    = "dash"
   type    = "A"
@@ -32,7 +31,7 @@ resource "cloudflare_record" "a_dash" {
   ttl     = 1
 }
 
-resource "cloudflare_record" "a_in_3x" {
+resource "cloudflare_dns_record" "a_in_3x" {
   zone_id = local.zone_id
   name    = "in.3x"
   type    = "A"
@@ -41,7 +40,7 @@ resource "cloudflare_record" "a_in_3x" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_in" {
+resource "cloudflare_dns_record" "a_in" {
   zone_id = local.zone_id
   name    = "in"
   type    = "A"
@@ -53,7 +52,7 @@ resource "cloudflare_record" "a_in" {
 # status.romashov.tech → node2 (RU). Traefik reverse-proxies to Cloudflare Pages
 # (static wrapper) and Grafana Cloud (dashboard paths). Direct DNS to Pages is
 # avoided—many RU ISPs block *.pages.dev; see services/proxy/config/dynamic/status.yml.
-resource "cloudflare_record" "a_status" {
+resource "cloudflare_dns_record" "a_status" {
   zone_id = local.zone_id
   name    = "status"
   type    = "A"
@@ -62,7 +61,7 @@ resource "cloudflare_record" "a_status" {
   ttl     = 1
 }
 
-resource "cloudflare_record" "a_node1" {
+resource "cloudflare_dns_record" "a_node1" {
   zone_id = local.zone_id
   name    = "node1"
   type    = "A"
@@ -71,7 +70,7 @@ resource "cloudflare_record" "a_node1" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_node2" {
+resource "cloudflare_dns_record" "a_node2" {
   zone_id = local.zone_id
   name    = "node2"
   type    = "A"
@@ -80,7 +79,7 @@ resource "cloudflare_record" "a_node2" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_node3" {
+resource "cloudflare_dns_record" "a_node3" {
   zone_id = local.zone_id
   name    = "node3"
   type    = "A"
@@ -89,7 +88,7 @@ resource "cloudflare_record" "a_node3" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_node4" {
+resource "cloudflare_dns_record" "a_node4" {
   zone_id = local.zone_id
   name    = "node4"
   type    = "A"
@@ -98,7 +97,7 @@ resource "cloudflare_record" "a_node4" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_out_3x" {
+resource "cloudflare_dns_record" "a_out_3x" {
   zone_id = local.zone_id
   name    = "out.3x"
   type    = "A"
@@ -107,7 +106,7 @@ resource "cloudflare_record" "a_out_3x" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_out" {
+resource "cloudflare_dns_record" "a_out" {
   zone_id = local.zone_id
   name    = "out"
   type    = "A"
@@ -116,7 +115,7 @@ resource "cloudflare_record" "a_out" {
   ttl     = 1
 }
 
-resource "cloudflare_record" "a_russia" {
+resource "cloudflare_dns_record" "a_russia" {
   zone_id = local.zone_id
   name    = "russia"
   type    = "A"
@@ -125,7 +124,7 @@ resource "cloudflare_record" "a_russia" {
   ttl     = 1
 }
 
-resource "cloudflare_record" "a_tg" {
+resource "cloudflare_dns_record" "a_tg" {
   zone_id = local.zone_id
   name    = "tg"
   type    = "A"
@@ -134,7 +133,7 @@ resource "cloudflare_record" "a_tg" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_v2_tg" {
+resource "cloudflare_dns_record" "a_v2_tg" {
   zone_id = local.zone_id
   name    = "v2.tg"
   type    = "A"
@@ -143,7 +142,7 @@ resource "cloudflare_record" "a_v2_tg" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_v3_tg" {
+resource "cloudflare_dns_record" "a_v3_tg" {
   zone_id = local.zone_id
   name    = "v3.tg"
   type    = "A"
@@ -152,7 +151,7 @@ resource "cloudflare_record" "a_v3_tg" {
   ttl     = 900
 }
 
-resource "cloudflare_record" "a_vault" {
+resource "cloudflare_dns_record" "a_vault" {
   zone_id = local.zone_id
   name    = "vault"
   type    = "A"
@@ -161,24 +160,7 @@ resource "cloudflare_record" "a_vault" {
   ttl     = 1
 }
 
-# Zone-wide SSL mode. Originally added by the (now-closed) DNS-flip-to-sweden
-# PR which moved vault.romashov.tech to sweden1 over HTTP. That migration is
-# paused (A1.Flex capacity in Stockholm AD-1 is exhausted), but the override
-# resource was created in state by that PR's CI apply. Declaring it here
-# keeps state and code consistent so terraform doesn't try to destroy it —
-# Cloudflare's Free plan rejects writes to some read-only settings on destroy,
-# which made the destroy path unrecoverable. Flexible SSL is fine for the
-# current zone setup: a_vault is the only externally-hosted proxied record,
-# and Traefik on node2 has http-point with auto-redirect to https-point, so
-# CF→node2 over HTTP works.
-resource "cloudflare_zone_settings_override" "romashov_tech" {
-  zone_id = local.zone_id
-  settings {
-    ssl = "flexible"
-  }
-}
-
-resource "cloudflare_record" "a_vpn" {
+resource "cloudflare_dns_record" "a_vpn" {
   zone_id = local.zone_id
   name    = "vpn"
   type    = "A"
@@ -188,7 +170,7 @@ resource "cloudflare_record" "a_vpn" {
 }
 
 # dummy IP — redirected to Pages via proxied CNAME at apex
-resource "cloudflare_record" "a_www" {
+resource "cloudflare_dns_record" "a_www" {
   zone_id = local.zone_id
   name    = "www"
   type    = "A"
@@ -202,7 +184,7 @@ resource "cloudflare_record" "a_www" {
 
 # ── DNS — CNAME records ───────────────────────────────────────────────────────
 
-resource "cloudflare_record" "cname_apex" {
+resource "cloudflare_dns_record" "cname_apex" {
   zone_id = local.zone_id
   name    = "romashov.tech"
   type    = "CNAME"
@@ -213,7 +195,7 @@ resource "cloudflare_record" "cname_apex" {
 
 # img.cartok CNAME → public.r2.dev is auto-generated by R2, read-only via DNS API (error 1052).
 
-resource "cloudflare_record" "cname_webhook" {
+resource "cloudflare_dns_record" "cname_webhook" {
   zone_id = local.zone_id
   name    = "webhook"
   type    = "CNAME"
@@ -224,7 +206,7 @@ resource "cloudflare_record" "cname_webhook" {
 
 # ── DNS — MX records ──────────────────────────────────────────────────────────
 
-resource "cloudflare_record" "mx_apex" {
+resource "cloudflare_dns_record" "mx_apex" {
   zone_id  = local.zone_id
   name     = "romashov.tech"
   type     = "MX"
@@ -236,7 +218,7 @@ resource "cloudflare_record" "mx_apex" {
 
 # ── DNS — TXT records ─────────────────────────────────────────────────────────
 
-resource "cloudflare_record" "txt_acme_challenge_m_inventory" {
+resource "cloudflare_dns_record" "txt_acme_challenge_m_inventory" {
   zone_id = local.zone_id
   name    = "_acme-challenge.m.inventory"
   type    = "TXT"
@@ -245,7 +227,7 @@ resource "cloudflare_record" "txt_acme_challenge_m_inventory" {
   ttl     = 120
 }
 
-resource "cloudflare_record" "txt_mail_dkim" {
+resource "cloudflare_dns_record" "txt_mail_dkim" {
   zone_id = local.zone_id
   name    = "mail._domainkey"
   type    = "TXT"
@@ -254,13 +236,125 @@ resource "cloudflare_record" "txt_mail_dkim" {
   ttl     = 1
 }
 
-resource "cloudflare_record" "txt_apex_spf" {
+resource "cloudflare_dns_record" "txt_apex_spf" {
   zone_id = local.zone_id
   name    = "romashov.tech"
   type    = "TXT"
   content = "v=spf1 redirect=_spf.yandex.net"
   proxied = false
   ttl     = 1
+}
+
+# ── moved blocks: cloudflare_record → cloudflare_dns_record ──────────────────
+# Allow terraform to migrate state without destroying/recreating DNS records.
+
+moved {
+  from = cloudflare_record.a_alloy
+  to   = cloudflare_dns_record.a_alloy
+}
+moved {
+  from = cloudflare_record.a_dash
+  to   = cloudflare_dns_record.a_dash
+}
+moved {
+  from = cloudflare_record.a_in_3x
+  to   = cloudflare_dns_record.a_in_3x
+}
+moved {
+  from = cloudflare_record.a_in
+  to   = cloudflare_dns_record.a_in
+}
+moved {
+  from = cloudflare_record.a_status
+  to   = cloudflare_dns_record.a_status
+}
+moved {
+  from = cloudflare_record.a_node1
+  to   = cloudflare_dns_record.a_node1
+}
+moved {
+  from = cloudflare_record.a_node2
+  to   = cloudflare_dns_record.a_node2
+}
+moved {
+  from = cloudflare_record.a_node3
+  to   = cloudflare_dns_record.a_node3
+}
+moved {
+  from = cloudflare_record.a_node4
+  to   = cloudflare_dns_record.a_node4
+}
+moved {
+  from = cloudflare_record.a_out_3x
+  to   = cloudflare_dns_record.a_out_3x
+}
+moved {
+  from = cloudflare_record.a_out
+  to   = cloudflare_dns_record.a_out
+}
+moved {
+  from = cloudflare_record.a_russia
+  to   = cloudflare_dns_record.a_russia
+}
+moved {
+  from = cloudflare_record.a_tg
+  to   = cloudflare_dns_record.a_tg
+}
+moved {
+  from = cloudflare_record.a_v2_tg
+  to   = cloudflare_dns_record.a_v2_tg
+}
+moved {
+  from = cloudflare_record.a_v3_tg
+  to   = cloudflare_dns_record.a_v3_tg
+}
+moved {
+  from = cloudflare_record.a_vault
+  to   = cloudflare_dns_record.a_vault
+}
+moved {
+  from = cloudflare_record.a_vpn
+  to   = cloudflare_dns_record.a_vpn
+}
+moved {
+  from = cloudflare_record.a_www
+  to   = cloudflare_dns_record.a_www
+}
+moved {
+  from = cloudflare_record.cname_apex
+  to   = cloudflare_dns_record.cname_apex
+}
+moved {
+  from = cloudflare_record.cname_webhook
+  to   = cloudflare_dns_record.cname_webhook
+}
+moved {
+  from = cloudflare_record.mx_apex
+  to   = cloudflare_dns_record.mx_apex
+}
+moved {
+  from = cloudflare_record.txt_acme_challenge_m_inventory
+  to   = cloudflare_dns_record.txt_acme_challenge_m_inventory
+}
+moved {
+  from = cloudflare_record.txt_mail_dkim
+  to   = cloudflare_dns_record.txt_mail_dkim
+}
+moved {
+  from = cloudflare_record.txt_apex_spf
+  to   = cloudflare_dns_record.txt_apex_spf
+}
+
+# ── Zone settings ─────────────────────────────────────────────────────────────
+# cloudflare_zone_settings_override was removed in v5; each setting is now a
+# separate cloudflare_zone_setting resource.
+# Before the first plan/apply with v5, remove the old state entry manually:
+#   terraform state rm 'module.cloudflare.cloudflare_zone_settings_override.romashov_tech'
+
+resource "cloudflare_zone_setting" "romashov_tech_ssl" {
+  zone_id    = local.zone_id
+  setting_id = "ssl"
+  value      = "flexible"
 }
 
 # ── R2 Buckets ───────────────────────────────────────────────────────────────
@@ -305,4 +399,12 @@ resource "cloudflare_pages_project" "romashov_tech_status" {
   production_branch = "master"
 
   lifecycle { ignore_changes = [source, build_config, deployment_configs] }
+}
+
+resource "cloudflare_d1_database" "romashov_tech_status_incidents" {
+  account_id = var.account_id
+  name       = "romashov-tech-status-incidents"
+  read_replication = {
+    mode = "disabled"
+  }
 }
