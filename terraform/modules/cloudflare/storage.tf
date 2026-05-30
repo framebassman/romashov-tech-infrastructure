@@ -10,6 +10,20 @@ resource "cloudflare_r2_bucket" "vpn_certs" {
   name       = "vpn-certs"
 }
 
+resource "cloudflare_r2_bucket" "public" {
+  account_id = var.account_id
+  name       = "public"
+}
+
+resource "cloudflare_r2_custom_domain" "public" {
+  account_id  = var.account_id
+  bucket_name = cloudflare_r2_bucket.public.name
+  domain      = "public.romashov.tech"
+  zone_id     = local.zone_id
+  enabled     = true
+  min_tls     = "1.2"
+}
+
 # Terraform remote state backend — do not delete
 resource "cloudflare_r2_bucket" "terraform_backend" {
   account_id = var.account_id
