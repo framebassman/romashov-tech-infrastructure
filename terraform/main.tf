@@ -52,7 +52,7 @@ module "vdsina_com" {
 }
 
 module "aiven_postgres" {
-  source                     = "./modules/aiven-postgres/"
+  source                     = "./modules/aiven/"
   aiven_api_token            = var.aiven_api_token
   project_name               = var.project_name
   pg_avnadmin_user_password  = var.pg_avnadmin_user_password
