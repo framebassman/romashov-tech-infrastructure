@@ -92,9 +92,3 @@ variable "grafana_synthetic_monitoring_token" {
   type        = string
   sensitive   = true
 }
-
-variable "slack_grafana_bot_token" {
-  description = "Slack Bot User OAuth Token (xoxb-...) for the Grafana Alerts custom Slack app."
-  type        = string
-  sensitive   = true
-}

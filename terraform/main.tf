@@ -3,7 +3,7 @@ terraform {
   required_providers {
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5"
+      version = "~> 5.17"
     }
     oci = {
       source  = "oracle/oci"
@@ -90,6 +90,6 @@ provider "grafana" {
 module "grafana_monitoring" {
   source          = "./modules/grafana-monitoring/"
   stack_slug      = var.grafana_stack_slug
-  slack_bot_token = var.slack_grafana_bot_token
+  slack_bot_token = module.cloudflare.slack_grafana_bot_token
   slack_channel   = "general"
 }

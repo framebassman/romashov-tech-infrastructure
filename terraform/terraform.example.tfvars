@@ -19,4 +19,3 @@ oci_private_key = ""
 # только если slug изменился.
 grafana_cloud_api_key              = "" # KV: grafana_cloud_api_key
 grafana_synthetic_monitoring_token = "" # KV: GRAFANA_SYNTHETIC_MONITORING_TOKEN
-slack_grafana_bot_token            = "" # KV: slack_grafana_bot_token

@@ -23,6 +23,18 @@ resource "cloudflare_workers_kv_namespace" "romashov_tech" {
   title      = "romashov-tech"
 }
 
+# Workaround: data "cloudflare_workers_kv" в v5 прогоняет ответ через
+# apijson.UnmarshalComputed, который ожидает JSON — plain string тихо возвращает пустую строку.
+# Читаем значение напрямую через API и оборачиваем в JSON-объект через jq.
+# Issue: https://github.com/cloudflare/terraform-provider-cloudflare/issues/5327
+data "external" "slack_grafana_bot_token" {
+  program = [
+    "bash", "-c",
+    "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"https://api.cloudflare.com/client/v4/accounts/${var.account_id}/storage/kv/namespaces/${cloudflare_workers_kv_namespace.romashov_tech.id}/values/slack_grafana_bot_token\" | jq -Rc '{value: .}'"
+  ]
+}
+
+
 # ── D1 Databases ─────────────────────────────────────────────────────────────
 
 resource "cloudflare_d1_database" "romashov_tech_status_incidents" {
