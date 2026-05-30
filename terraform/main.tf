@@ -51,7 +51,7 @@ module "vdsina_com" {
   vdsina_api_token = var.vdsina_com_api_token
 }
 
-module "aiven_postgres" {
+module "aiven" {
   source                     = "./modules/aiven/"
   aiven_api_token            = var.aiven_api_token
   project_name               = var.project_name
