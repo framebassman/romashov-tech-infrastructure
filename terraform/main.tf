@@ -47,23 +47,23 @@ module "cloudflare" {
 
 module "vdsina_ru" {
   source           = "./modules/vdsina-ru/"
-  vdsina_api_token = var.vdsina_ru_api_token
+  vdsina_api_token = data.external.vdsina_ru_api_token.result.value
 }
 
 module "vdsina_com" {
   source           = "./modules/vdsina-com/"
-  vdsina_api_token = var.vdsina_com_api_token
+  vdsina_api_token = data.external.vdsina_com_api_token.result.value
 }
 
 module "aiven" {
   source                     = "./modules/aiven/"
-  aiven_api_token            = var.aiven_api_token
+  aiven_api_token            = data.external.aiven_api_token.result.value
   project_name               = var.project_name
-  pg_avnadmin_user_password  = var.pg_avnadmin_user_password
-  pg_foodikal_user_password  = var.pg_foodikal_user_password
-  pg_inventory_user_password = var.pg_inventory_user_password
-  pg_outline_user_password   = var.pg_outline_user_password
-  pg_vault_user_password     = var.pg_vault_user_password
+  pg_avnadmin_user_password  = data.external.pg_avnadmin_user_password.result.value
+  pg_foodikal_user_password  = data.external.pg_foodikal_user_password.result.value
+  pg_inventory_user_password = data.external.pg_inventory_user_password.result.value
+  pg_outline_user_password   = data.external.pg_outline_user_password.result.value
+  pg_vault_user_password     = data.external.pg_vault_user_password.result.value
   pg_mtproxy_user_password   = data.external.pg_mtproxy_user_password.result.value
 }
 
@@ -86,6 +86,38 @@ module "oci" {
 # Replaces self-hosted Uptime Kuma on node1. See modules/grafana-monitoring/README.md.
 locals {
   kv_base_url = "https://api.cloudflare.com/client/v4/accounts/${var.account_id}/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values"
+}
+
+data "external" "vdsina_ru_api_token" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/vdsina_ru_api_token\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "vdsina_com_api_token" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/vdsina_com_api_token\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "aiven_api_token" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/aiven_api_token\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "pg_avnadmin_user_password" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_avnadmin_user_password\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "pg_foodikal_user_password" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_foodikal_user_password\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "pg_inventory_user_password" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_inventory_user_password\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "pg_outline_user_password" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_outline_user_password\" | jq -Rc '{value: .}'"]
+}
+
+data "external" "pg_vault_user_password" {
+  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_vault_user_password\" | jq -Rc '{value: .}'"]
 }
 
 data "external" "pg_mtproxy_user_password" {
