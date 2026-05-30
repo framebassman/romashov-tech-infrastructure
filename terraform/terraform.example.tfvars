@@ -13,9 +13,3 @@ pg_mtproxy_user_password   = ""
 
 # OCI: VM и compartment захардкожены в модуле oci-vm и main.tf
 oci_private_key = ""
-
-# Grafana Cloud (modules/grafana-monitoring) — все значения из Cloudflare KV.
-# grafana_stack_slug дефолтится в "romashovtech" в variables.tf — переопредели
-# только если slug изменился.
-grafana_cloud_api_key              = "" # KV: grafana_cloud_api_key
-grafana_synthetic_monitoring_token = "" # KV: GRAFANA_SYNTHETIC_MONITORING_TOKEN

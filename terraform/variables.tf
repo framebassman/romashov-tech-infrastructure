@@ -32,10 +32,6 @@ variable "pg_vault_user_password" {
   type        = string
 }
 
-variable "pg_mtproxy_user_password" {
-  description = "Password for Postgres mtproxy-production user (MTProxy secrets DB)"
-  type        = string
-}
 
 variable "vdsina_ru_api_token" {
   description = "VDSina.ru API token"
@@ -81,14 +77,3 @@ variable "grafana_stack_slug" {
   default     = "romashovtech"
 }
 
-variable "grafana_cloud_api_key" {
-  description = "Grafana Cloud Access Policy token with stacks:read + alerts:write + datasources:read scopes. Used as the grafana provider 'auth'."
-  type        = string
-  sensitive   = true
-}
-
-variable "grafana_synthetic_monitoring_token" {
-  description = "Grafana Synthetic Monitoring access token (generated in SM → Config after plugin install)."
-  type        = string
-  sensitive   = true
-}

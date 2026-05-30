@@ -13,6 +13,10 @@ terraform {
       source  = "grafana/grafana"
       version = "~> 3"
     }
+    external = {
+      source  = "hashicorp/external"
+      version = "~> 2"
+    }
   }
 
   backend "s3" {
@@ -60,7 +64,7 @@ module "aiven" {
   pg_inventory_user_password = var.pg_inventory_user_password
   pg_outline_user_password   = var.pg_outline_user_password
   pg_vault_user_password     = var.pg_vault_user_password
-  pg_mtproxy_user_password   = var.pg_mtproxy_user_password
+  pg_mtproxy_user_password   = data.external.pg_mtproxy_user_password.result.value
 }
 
 # OCI: аутентификация из переменных (terraform.tfvars или backend.conf)
@@ -80,11 +84,36 @@ module "oci" {
 
 # ── Grafana Cloud (Synthetic Monitoring + Alerting) ──────────────────────────
 # Replaces self-hosted Uptime Kuma on node1. See modules/grafana-monitoring/README.md.
+locals {
+  kv_base_url = "https://api.cloudflare.com/client/v4/accounts/${var.account_id}/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values"
+}
+
+data "external" "pg_mtproxy_user_password" {
+  program = [
+    "bash", "-c",
+    "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_mtproxy_user_password\" | jq -Rc '{value: .}'"
+  ]
+}
+
+data "external" "grafana_cloud_api_key" {
+  program = [
+    "bash", "-c",
+    "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/grafana_cloud_api_key\" | jq -Rc '{value: .}'"
+  ]
+}
+
+data "external" "grafana_synthetic_monitoring_token" {
+  program = [
+    "bash", "-c",
+    "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/GRAFANA_SYNTHETIC_MONITORING_TOKEN\" | jq -Rc '{value: .}'"
+  ]
+}
+
 provider "grafana" {
   url             = "https://${var.grafana_stack_slug}.grafana.net"
-  auth            = var.grafana_cloud_api_key
+  auth            = data.external.grafana_cloud_api_key.result.value
   sm_url          = "https://synthetic-monitoring-api-eu-west-2.grafana.net"
-  sm_access_token = var.grafana_synthetic_monitoring_token
+  sm_access_token = data.external.grafana_synthetic_monitoring_token.result.value
 }
 
 module "grafana_monitoring" {
