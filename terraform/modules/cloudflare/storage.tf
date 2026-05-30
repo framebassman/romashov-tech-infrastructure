@@ -10,6 +10,29 @@ resource "cloudflare_r2_bucket" "vpn_certs" {
   name       = "vpn-certs"
 }
 
+resource "cloudflare_r2_managed_domain" "vpn_certs" {
+  account_id  = var.account_id
+  bucket_name = cloudflare_r2_bucket.vpn_certs.name
+  enabled     = true
+}
+
+# Writes the computed r2.dev domain to KV so fetch-secrets.sh can render
+# services/proxy/config/dynamic/vpn-certs.yml on the host at deploy time.
+resource "null_resource" "vpn_certs_r2_domain_to_kv" {
+  triggers = {
+    domain = cloudflare_r2_managed_domain.vpn_certs.domain
+  }
+
+  provisioner "local-exec" {
+    command = <<-EOT
+      curl -sf -X PUT \
+        "https://api.cloudflare.com/client/v4/accounts/${var.account_id}/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values/VPN_CERTS_R2_DEV_DOMAIN" \
+        -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+        --data-binary "${cloudflare_r2_managed_domain.vpn_certs.domain}"
+    EOT
+  }
+}
+
 resource "cloudflare_r2_bucket" "public" {
   account_id = var.account_id
   name       = "public"

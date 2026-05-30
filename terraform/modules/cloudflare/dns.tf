@@ -1,5 +1,14 @@
 # ── A records ────────────────────────────────────────────────────────────────
 
+resource "cloudflare_dns_record" "a_certs" {
+  zone_id = local.zone_id
+  name    = "certs"
+  type    = "A"
+  content = "109.172.90.19"
+  proxied = false
+  ttl     = 1
+}
+
 resource "cloudflare_dns_record" "a_alloy" {
   zone_id = local.zone_id
   name    = "alloy"
