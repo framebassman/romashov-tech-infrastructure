@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/external"
       version = "~> 2"
     }
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3"
+    }
   }
 }
 
