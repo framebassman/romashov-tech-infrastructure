@@ -10,11 +10,6 @@ resource "cloudflare_r2_bucket" "vpn_certs" {
   name       = "vpn-certs"
 }
 
-import {
-  to = cloudflare_r2_bucket.public
-  id = "4faf2c3b5dd13669f97dd976498ad56a/public"
-}
-
 resource "cloudflare_r2_bucket" "public" {
   account_id = var.account_id
   name       = "public"
