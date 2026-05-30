@@ -1,14 +1,4 @@
-terraform {
-  required_providers {
-    oci = {
-      source  = "oracle/oci"
-      version = "~> 8"
-    }
-  }
-}
-
 locals {
-  compartment_id = "ocid1.tenancy.oc1..aaaaaaaamw5qcdprotjyd7tjbxuijfmjpdxndosth5wiul6ag2m54wqhnzna"
   # Stuck on VM.Standard.E2.1.Micro (1/8 OCPU + 1 GB RAM) because Stockholm
   # AD-1 currently has no VM.Standard.A1.Flex (ARM) capacity. The original
   # plan was to migrate sweden to A1 (per-tenancy quota is fine: 4 OCPU +
@@ -68,11 +58,11 @@ EOT
   }
 
   create_vnic_details {
-    subnet_id              = var.subnet_id
+    subnet_id              = oci_core_subnet.default_vcn.id
     assign_public_ip       = local.assign_public_ip
     hostname_label         = local.instance_display_name
     skip_source_dest_check = false
-    nsg_ids                = var.nsg_ids
+    nsg_ids                = [oci_core_network_security_group.sweden_inbound.id]
   }
 
   source_details {
@@ -88,4 +78,6 @@ EOT
     ignore_changes       = [source_details]
     replace_triggered_by = [terraform_data.shape_marker]
   }
+
+  depends_on = [oci_identity_policy.compute]
 }
