@@ -2,7 +2,7 @@
 
 resource "cloudflare_dns_record" "a_certs" {
   zone_id = local.zone_id
-  name    = "certs"
+  name    = "4faf2c3b5dd13669f97dd976498ad56a"
   type    = "A"
   content = "109.172.90.19"
   proxied = false
