@@ -1,0 +1,21 @@
+- hosts: russian
+  become: true
+  become_user: d.romashov
+  vars:
+    project_path: /home/d.romashov/romashov-tech
+  tasks:
+    - name: Upload cert to R2
+      ansible.builtin.include_role:
+        name: cert-sync
+        tasks_from: upload.yml
+
+- hosts: vpn
+  become: true
+  become_user: d.romashov
+  vars:
+    project_path: /home/d.romashov/romashov-tech
+  tasks:
+    - name: Pull cert from R2
+      ansible.builtin.include_role:
+        name: cert-sync
+        tasks_from: pull.yml

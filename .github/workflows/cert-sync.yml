@@ -1,0 +1,24 @@
+name: Sync VPN wildcard cert to R2
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 * * 1'  # 04:00 UTC every Monday
+
+jobs:
+  cert-sync:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Run cert-sync playbook
+        uses: dawidd6/action-ansible-playbook@v9
+        with:
+          directory: ./ansible
+          playbook: ./playbooks/cert-sync.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          requirements: ./requirements.yml
+          options: |
+            --extra-vars CLOUDFLARE_R2_API_KEY_ID=${{ secrets.CLOUDFLARE_R2_API_KEY_ID }}
+            --extra-vars CLOUDFLARE_R2_API_ACCESS_SECRET=${{ secrets.CLOUDFLARE_R2_API_ACCESS_SECRET }}
+            --extra-vars CLOUDFLARE_ACCOUNT_ID=${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
