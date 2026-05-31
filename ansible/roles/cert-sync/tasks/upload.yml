@@ -1,0 +1,53 @@
+---
+- name: Verify R2 credentials are provided
+  ansible.builtin.assert:
+    that:
+      - CLOUDFLARE_R2_API_KEY_ID is defined and CLOUDFLARE_R2_API_KEY_ID | length > 0
+      - CLOUDFLARE_R2_API_ACCESS_SECRET is defined and CLOUDFLARE_R2_API_ACCESS_SECRET | length > 0
+      - CLOUDFLARE_ACCOUNT_ID is defined and CLOUDFLARE_ACCOUNT_ID | length > 0
+    fail_msg: >-
+      Missing R2 credentials. Pass via --extra-vars
+      CLOUDFLARE_R2_API_KEY_ID / CLOUDFLARE_R2_API_ACCESS_SECRET / CLOUDFLARE_ACCOUNT_ID.
+    quiet: true
+  delegate_to: localhost
+  run_once: true
+
+- name: Set R2 endpoint
+  ansible.builtin.set_fact:
+    r2_endpoint: "https://{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
+
+- name: Extract cert and key from acme.json into letsencrypt dir
+  ansible.builtin.shell: |
+    jq -r '.leresolver.Certificates[] | select(.domain.main=="romashov.tech") | .certificate' \
+      {{ project_path }}/services/proxy/certs/acme.json \
+    | base64 -d > "{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-crt.pem"
+    jq -r '.leresolver.Certificates[] | select(.domain.main=="romashov.tech") | .key' \
+      {{ project_path }}/services/proxy/certs/acme.json \
+    | base64 -d > "{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-key.pem"
+  changed_when: true
+  no_log: true
+
+- name: Upload cert to R2
+  amazon.aws.s3_object:
+    mode: put
+    bucket: vpn-certs
+    object: cert.pem
+    src: "{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-crt.pem"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+    permission: []
+
+- name: Upload key to R2
+  amazon.aws.s3_object:
+    mode: put
+    bucket: vpn-certs
+    object: key.pem
+    src: "{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-key.pem"
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+    permission: []
+  no_log: true
