@@ -10,126 +10,162 @@
     {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
-      "id": 100,
+      "id": 200,
       "panels": [],
-      "title": "VLESS",
+      "title": "Занятость канала и сертификат",
       "type": "row"
     },
     {
-      "id": 1,
-      "type": "status-history",
-      "title": "VLESS сервера",
-      "gridPos": { "h": 5, "w": 24, "x": 0, "y": 1 },
+      "id": 5,
+      "type": "timeseries",
+      "title": "Канал — in.3x (RU)",
+      "description": "Internet interface RX/TX on in.3x.romashov.tech. 10 Gbps link.",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
           "editorMode": "code",
-          "expr": "min by(job)(min_over_time(probe_success{job=~\"3x-ui-in|3x-ui-out\"}[10m]))",
-          "interval": "10m",
-          "legendFormat": "{{job}}",
+          "expr": "sum(rate(node_network_receive_bytes_total{job=\"node\", instance=\"3x-in\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))",
+          "instant": false,
+          "legendFormat": "RX",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "sum(rate(node_network_transmit_bytes_total{job=\"node\", instance=\"3x-in\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))",
+          "instant": false,
+          "legendFormat": "TX",
+          "range": true,
+          "refId": "B"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": { "text": "DOWN", "color": "red", "index": 0 },
-                "1": { "text": "UP", "color": "green", "index": 1 }
-              }
-            }
-          ],
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              { "color": "red", "value": null },
-              { "color": "green", "value": 1 }
-            ]
+            "steps": [{ "color": "green", "value": null }]
           },
-          "custom": {
-            "fillOpacity": 90,
-            "lineWidth": 0
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "TX" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+            ]
           }
-        }
+        ]
       },
       "options": {
-        "colWidth": 0.95,
-        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
-        "rowHeight": 0.85,
-        "showValue": "never",
-        "tooltip": { "mode": "single", "sort": "none" },
-        "alignValue": "center"
+        "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
       }
     },
     {
-      "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 },
-      "id": 101,
-      "panels": [],
-      "title": "Cisco Secure Connect / Cisco AnyConnect",
-      "type": "row"
-    },
-    {
-      "id": 2,
-      "type": "status-history",
-      "title": "OpenConnect сервера",
-      "gridPos": { "h": 8, "w": 18, "x": 0, "y": 18 },
+      "id": 6,
+      "type": "timeseries",
+      "title": "Канал — out.3x (NL)",
+      "description": "Internet interface RX/TX on out.3x.romashov.tech. 10 Gbps link.",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
           "editorMode": "code",
-          "expr": "min by(job)(min_over_time(probe_success{job=~\"node[1-4]\"}[10m]))",
-          "interval": "10m",
-          "legendFormat": "{{job}}",
+          "expr": "sum(rate(node_network_receive_bytes_total{job=\"node\", instance=\"3x-out\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))",
+          "instant": false,
+          "legendFormat": "RX",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "sum(rate(node_network_transmit_bytes_total{job=\"node\", instance=\"3x-out\", stack=\"3x-ui\", device!~\"lo|docker.*|br-.*|veth.*\"}[5m]))",
+          "instant": false,
+          "legendFormat": "TX",
+          "range": true,
+          "refId": "B"
         }
       ],
       "fieldConfig": {
         "defaults": {
-          "color": { "mode": "thresholds" },
-          "mappings": [
-            {
-              "type": "value",
-              "options": {
-                "0": { "text": "DOWN", "color": "red", "index": 0 },
-                "1": { "text": "UP", "color": "green", "index": 1 }
-              }
-            }
-          ],
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": { "legend": false, "tooltip": false, "viz": false },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": { "type": "linear" },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": { "group": "A", "mode": "none" },
+            "thresholdsStyle": { "mode": "off" }
+          },
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
-            "steps": [
-              { "color": "red", "value": null },
-              { "color": "green", "value": 1 }
-            ]
+            "steps": [{ "color": "green", "value": null }]
           },
-          "custom": {
-            "fillOpacity": 90,
-            "lineWidth": 0
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "TX" },
+            "properties": [
+              { "id": "color", "value": { "fixedColor": "orange", "mode": "fixed" } }
+            ]
           }
-        }
+        ]
       },
       "options": {
-        "colWidth": 0.95,
-        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
-        "rowHeight": 0.85,
-        "showValue": "never",
-        "tooltip": { "mode": "single", "sort": "none" },
-        "alignValue": "center"
+        "legend": { "calcs": ["lastNotNull", "max"], "displayMode": "table", "placement": "bottom", "showLegend": true },
+        "tooltip": { "mode": "multi", "sort": "desc" }
       }
     },
     {
       "id": 3,
       "type": "stat",
       "title": "Сертификат (dash.romashov.tech)",
-      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 18 },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 1 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {
@@ -168,17 +204,113 @@
     },
     {
       "collapsed": false,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
-      "id": 102,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "id": 201,
       "panels": [],
-      "title": "Telegram",
+      "title": "Серверы",
       "type": "row"
+    },
+    {
+      "id": 1,
+      "type": "status-history",
+      "title": "VLESS сервера",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "min by(job)(min_over_time(probe_success{job=~\"3x-ui-in|3x-ui-out\"}[10m]))",
+          "interval": "10m",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red", "index": 0 },
+                "1": { "text": "UP", "color": "green", "index": 1 }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "custom": { "fillOpacity": 90, "lineWidth": 0 }
+        }
+      },
+      "options": {
+        "colWidth": 0.95,
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "rowHeight": 0.85,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" },
+        "alignValue": "center"
+      }
+    },
+    {
+      "id": 2,
+      "type": "status-history",
+      "title": "OpenConnect сервера",
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 10 },
+      "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
+          "editorMode": "code",
+          "expr": "min by(job)(min_over_time(probe_success{job=~\"node[1-4]\"}[10m]))",
+          "interval": "10m",
+          "legendFormat": "{{job}}",
+          "range": true,
+          "refId": "A"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "mappings": [
+            {
+              "type": "value",
+              "options": {
+                "0": { "text": "DOWN", "color": "red", "index": 0 },
+                "1": { "text": "UP", "color": "green", "index": 1 }
+              }
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "green", "value": 1 }
+            ]
+          },
+          "custom": { "fillOpacity": 90, "lineWidth": 0 }
+        }
+      },
+      "options": {
+        "colWidth": 0.95,
+        "legend": { "displayMode": "list", "placement": "bottom", "showLegend": true },
+        "rowHeight": 0.85,
+        "showValue": "never",
+        "tooltip": { "mode": "single", "sort": "none" },
+        "alignValue": "center"
+      }
     },
     {
       "id": 4,
       "type": "status-history",
       "title": "MTProxy (tg.romashov.tech)",
-      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 27 },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 10 },
       "datasource": { "type": "prometheus", "uid": "${prometheus_uid}" },
       "targets": [
         {
@@ -210,10 +342,7 @@
               { "color": "green", "value": 1 }
             ]
           },
-          "custom": {
-            "fillOpacity": 90,
-            "lineWidth": 0
-          }
+          "custom": { "fillOpacity": 90, "lineWidth": 0 }
         }
       },
       "options": {
