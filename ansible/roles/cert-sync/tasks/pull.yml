@@ -3,6 +3,19 @@
   ansible.builtin.set_fact:
     r2_endpoint: "https://{{ CLOUDFLARE_ACCOUNT_ID }}.r2.cloudflarestorage.com"
 
+# Certs are installed OUTSIDE the repo working tree so the deployment role's
+# `git reset --hard` can never delete them. Must match the bind-mount source in
+# romashov-tech/deploy/docker-compose.vpn.yml (VPN_CERTS_DIR, same default).
+- name: Set VPN certs dir
+  ansible.builtin.set_fact:
+    vpn_certs_dir: "{{ vpn_certs_dir | default('/home/d.romashov/vpn-certs') }}"
+
+- name: Ensure VPN certs dir exists
+  ansible.builtin.file:
+    path: "{{ vpn_certs_dir }}"
+    state: directory
+    mode: "0700"
+
 - name: Download cert from R2
   amazon.aws.s3_object:
     mode: get
@@ -31,14 +44,14 @@
 - name: Install cert (ocserv auto-reloads on file change)
   ansible.builtin.copy:
     src: /tmp/vpn-cert-sync.crt
-    dest: "{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-crt.pem"
+    dest: "{{ vpn_certs_dir }}/server-cert.pem"
     mode: "0644"
     remote_src: true
 
 - name: Install key
   ansible.builtin.copy:
     src: /tmp/vpn-cert-sync.key
-    dest: "{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-key.pem"
+    dest: "{{ vpn_certs_dir }}/server-key.pem"
     mode: "0600"
     remote_src: true
   no_log: true

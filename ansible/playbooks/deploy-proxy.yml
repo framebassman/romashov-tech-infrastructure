@@ -5,5 +5,19 @@
   vars:
     application: proxy
     project_path: "/home/d.romashov/romashov-tech"
+  # Snapshot Traefik's current wildcard cert to R2 BEFORE the deployment role runs.
+  # This runs before `git reset --hard`, so the live cert is captured even on the
+  # deploy that drops acme.json from the repo. Skipped on a fresh host where Traefik
+  # has not issued a cert yet (no acme.json to extract from).
+  pre_tasks:
+    - name: Stat acme.json
+      ansible.builtin.stat:
+        path: "{{ project_path }}/services/proxy/certs/acme.json"
+      register: acme_json
+    - name: Upload server cert to R2 from acme.json
+      ansible.builtin.import_role:
+        name: cert-sync
+        tasks_from: upload.yml
+      when: acme_json.stat.exists and (acme_json.stat.size | default(0) | int) > 2
   roles:
   - romashov-tech-deployment

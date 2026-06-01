@@ -5,5 +5,12 @@
   vars:
     application: vpn
     project_path: "/home/d.romashov/romashov-tech"
+  # Pull the server cert from R2 BEFORE the deployment role runs `make start`, so the
+  # bind-mount source (outside the repo working tree) exists when ocserv starts.
+  pre_tasks:
+    - name: Sync ocserv server cert from R2
+      ansible.builtin.import_role:
+        name: cert-sync
+        tasks_from: pull.yml
   roles:
   - romashov-tech-deployment
