@@ -61,7 +61,7 @@ resource "cloudflare_dns_record" "a_node1" {
   zone_id = local.zone_id
   name    = "node1"
   type    = "A"
-  content = "91.84.124.164"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 900
 }
@@ -79,7 +79,7 @@ resource "cloudflare_dns_record" "a_node3" {
   zone_id = local.zone_id
   name    = "node3"
   type    = "A"
-  content = "91.84.124.164"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 900
 }
@@ -88,7 +88,7 @@ resource "cloudflare_dns_record" "a_node4" {
   zone_id = local.zone_id
   name    = "node4"
   type    = "A"
-  content = "91.84.124.164"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 900
 }
@@ -97,7 +97,7 @@ resource "cloudflare_dns_record" "a_out_3x" {
   zone_id = local.zone_id
   name    = "out.3x"
   type    = "A"
-  content = "185.121.233.152"
+  content = "91.239.206.123"
   proxied = false
   ttl     = 900
 }
@@ -124,7 +124,7 @@ resource "cloudflare_dns_record" "a_tg" {
   zone_id = local.zone_id
   name    = "tg"
   type    = "A"
-  content = "91.84.124.164"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 900
 }
@@ -133,7 +133,7 @@ resource "cloudflare_dns_record" "a_v2_tg" {
   zone_id = local.zone_id
   name    = "v2.tg"
   type    = "A"
-  content = "91.84.124.164"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 900
 }
@@ -160,7 +160,7 @@ resource "cloudflare_dns_record" "a_vpn" {
   zone_id = local.zone_id
   name    = "vpn"
   type    = "A"
-  content = "91.84.124.164"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 300
 }

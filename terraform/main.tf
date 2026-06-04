@@ -50,11 +50,6 @@ module "vdsina_ru" {
   vdsina_api_token = data.external.vdsina_ru_api_token.result.value
 }
 
-module "vdsina_com" {
-  source           = "./modules/vdsina-com/"
-  vdsina_api_token = data.external.vdsina_com_api_token.result.value
-}
-
 module "aiven" {
   source                     = "./modules/aiven/"
   aiven_api_token            = data.external.aiven_api_token.result.value
@@ -90,10 +85,6 @@ locals {
 
 data "external" "vdsina_ru_api_token" {
   program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/vdsina_ru_api_token\" | jq -Rc '{value: .}'"]
-}
-
-data "external" "vdsina_com_api_token" {
-  program = ["bash", "-c", "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/vdsina_com_api_token\" | jq -Rc '{value: .}'"]
 }
 
 data "external" "aiven_api_token" {
