@@ -3,7 +3,8 @@ requirements:
 
 infrastructure:
 	make requirements
-	ansible-playbook playbooks/infrastructure.yml
+	ansible-playbook playbooks/infrastructure.yml \
+		--extra-vars CLOUDFLARE_API_TOKEN=$${CLOUDFLARE_API_TOKEN}
 
 deploy-vpn:
 	make requirements
@@ -16,7 +17,7 @@ deploy-vault:
 deploy-proxy:
 	make requirements
 	ansible-playbook playbooks/deploy-proxy.yml \
-		--extra-vars cloudflare_api_token=$${CLOUDFLARE_API_TOKEN}
+		--extra-vars CLOUDFLARE_API_TOKEN=$${CLOUDFLARE_API_TOKEN}
 
 deploy-mtproxy:
 	make requirements
@@ -33,7 +34,7 @@ deploy-3x-ui:
 deploy-grafana-alloy:
 	make requirements
 	ansible-playbook playbooks/deploy-grafana-alloy.yml \
-		--extra-vars cloudflare_api_token=$${CLOUDFLARE_API_TOKEN}
+		--extra-vars CLOUDFLARE_API_TOKEN=$${CLOUDFLARE_API_TOKEN}
 
 backup-3x-ui:
 	make requirements
@@ -48,4 +49,4 @@ restore-3x-ui:
 		--extra-vars CLOUDFLARE_R2_API_KEY_ID=$${CLOUDFLARE_R2_API_KEY_ID} \
 		--extra-vars CLOUDFLARE_R2_API_ACCESS_SECRET=$${CLOUDFLARE_R2_API_ACCESS_SECRET} \
 		--extra-vars CLOUDFLARE_ACCOUNT_ID=$${CLOUDFLARE_ACCOUNT_ID} \
-		$(if $(BACKUP_FILENAME),--extra-vars backup_filename=$(BACKUP_FILENAME),)
+		--extra-vars BACKUP_FILENAME=$${BACKUP_FILENAME}
