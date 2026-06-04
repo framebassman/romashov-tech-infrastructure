@@ -62,13 +62,6 @@ import:
 	-terraform import module.vdsina_ru.vdsina_ssh_key.romashov_workstation 28742
 	-terraform import module.vdsina_ru.vdsina_ssh_key.github_komplukter 29257
 	-terraform import module.vdsina_ru.vdsina_server.node2 3017377
-	@echo "--- VDSina.com ---"
-	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_komplukter 366
-	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_workstation 369
-	-terraform import module.vdsina_com.vdsina_ssh_key.pixel 368
-	-terraform import module.vdsina_com.vdsina_ssh_key.pixel_biometric 367
-	-terraform import module.vdsina_com.vdsina_server.node1 598372
-	-terraform import module.vdsina_com.vdsina_server.out_3x 820792
 	@echo "--- Aiven ---"
 	-terraform import module.aiven_postgres.aiven_pg.this romashov-tech/romashov-tech-postgres
 	-terraform import module.aiven_postgres.aiven_pg_database.postgres romashov-tech/romashov-tech-postgres/postgres
