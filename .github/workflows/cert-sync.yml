@@ -6,7 +6,7 @@ on:
     - cron: '0 4 * * 1'  # 04:00 UTC Mon
     - cron: '0 4 * * 3'  # 04:00 UTC Wed
     - cron: '0 4 * * 5'  # 04:00 UTC Fri
-    # 3x/week: ZeroSSL OCSP responses are valid ~7 days; running Mon/Wed/Fri
+    # 3x/week: Google Trust Services OCSP responses are valid ~7 days; running Mon/Wed/Fri
     # ensures the stapled response is never older than 2-3 days.
 
 jobs:
