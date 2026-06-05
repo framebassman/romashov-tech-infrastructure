@@ -51,3 +51,53 @@
     region: us-east-1
     permission: []
   no_log: true
+
+- name: Fetch OCSP response and upload to R2
+  # iOS Cisco Secure Client calls SecTrustEvaluate with kSecRevocationRequirePositiveResponse
+  # and no network access — a stapled OCSP response is the only way to pass revocation checking.
+  # Fetched once here (on the upload host) and distributed via R2 to all VPN hosts.
+  ansible.builtin.shell: |
+    CERT="{{ project_path }}/services/openconnect/letsencrypt/*.romashov.tech-crt.pem"
+    OUT="/tmp/vpn-cert-sync-ocsp.der"
+
+    OCSP_URL=$(openssl x509 -noout -ocsp_uri -in "$CERT" 2>/dev/null)
+    if [ -z "$OCSP_URL" ]; then
+      echo "[cert-sync] no OCSP URI in cert (LE R10+?), writing empty placeholder"
+      : > "$OUT"
+      exit 0
+    fi
+
+    awk '/-----BEGIN CERTIFICATE-----/{c++} c==2{print} /-----END CERTIFICATE-----/ && c==2{exit}' \
+      "$CERT" > /tmp/vpn-ocsp-issuer.pem
+
+    if openssl ocsp \
+        -issuer /tmp/vpn-ocsp-issuer.pem \
+        -cert "$CERT" \
+        -url "$OCSP_URL" \
+        -respout "$OUT" \
+        -no_nonce \
+        -timeout 10; then
+      echo "[cert-sync] OCSP response fetched from $OCSP_URL"
+    else
+      echo "[cert-sync] OCSP fetch failed, uploading empty placeholder"
+      : > "$OUT"
+    fi
+    rm -f /tmp/vpn-ocsp-issuer.pem
+  changed_when: true
+
+- name: Upload OCSP response to R2
+  amazon.aws.s3_object:
+    mode: put
+    bucket: vpn-certs
+    object: ocsp.der
+    src: /tmp/vpn-cert-sync-ocsp.der
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+    permission: []
+
+- name: Remove temp OCSP file
+  ansible.builtin.file:
+    path: /tmp/vpn-cert-sync-ocsp.der
+    state: absent
