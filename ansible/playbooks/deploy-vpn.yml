@@ -1,16 +1,30 @@
 ---
+# Step 1: extract cert+key from acme.json on node2, fetch OCSP, upload all to R2.
+# Must run before pull so vpn hosts always get a consistent cert+OCSP pair.
+- hosts: russian
+  become: true
+  become_user: d.romashov
+  vars:
+    project_path: "/home/d.romashov/romashov-tech"
+  tasks:
+    - name: Upload cert, key and OCSP response to R2
+      ansible.builtin.import_role:
+        name: cert-sync
+        tasks_from: upload.yml
+
+# Step 2: pull cert+key+OCSP from R2, then start ocserv.
+# pre_tasks run before the deployment role so bind-mount sources exist when
+# `make start-prod-vpn` brings up the container.
 - hosts: vpn
   become: true
   become_user: d.romashov
   vars:
     application: vpn
     project_path: "/home/d.romashov/romashov-tech"
-  # Pull the server cert from R2 BEFORE the deployment role runs `make start`, so the
-  # bind-mount source (outside the repo working tree) exists when ocserv starts.
   pre_tasks:
-    - name: Sync ocserv server cert from R2
+    - name: Sync ocserv cert, key and OCSP response from R2
       ansible.builtin.import_role:
         name: cert-sync
         tasks_from: pull.yml
   roles:
-  - romashov-tech-deployment
+    - romashov-tech-deployment
