@@ -56,6 +56,17 @@
     remote_src: true
   no_log: true
 
+- name: Download OCSP response from R2
+  amazon.aws.s3_object:
+    mode: get
+    bucket: vpn-certs
+    object: ocsp.der
+    dest: /tmp/vpn-cert-sync.ocsp
+    endpoint_url: "{{ r2_endpoint }}"
+    access_key: "{{ CLOUDFLARE_R2_API_KEY_ID }}"
+    secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
+    region: us-east-1
+
 - name: Remove temp files
   ansible.builtin.file:
     path: "{{ item }}"
@@ -64,37 +75,21 @@
     - /tmp/vpn-cert-sync.crt
     - /tmp/vpn-cert-sync.key
 
-- name: Fetch OCSP response for server cert stapling
-  # iOS Cisco Secure Client calls SecTrustEvaluate with kSecRevocationRequirePositiveResponse
-  # and no network access — a stapled OCSP response in the TLS handshake is the only way
-  # to pass revocation checking. ZeroSSL certs include an OCSP URI; LE R10+ certs do not.
-  # On any failure we write an empty placeholder so ocserv starts without stapling.
-  ansible.builtin.shell: |
-    set -e
-    CERT="{{ vpn_certs_dir }}/server-cert.pem"
-    OUT="{{ vpn_certs_dir }}/ocsp-response.der"
+# Docker creates a directory at the mount path if the file doesn't exist on the host
+# when the container first starts. Remove it so the copy task can write a file.
+- name: Remove ocsp-response.der if Docker created it as a directory
+  ansible.builtin.file:
+    path: "{{ vpn_certs_dir }}/ocsp-response.der"
+    state: absent
 
-    OCSP_URL=$(openssl x509 -noout -ocsp_uri -in "$CERT" 2>/dev/null)
-    if [ -z "$OCSP_URL" ]; then
-      echo "[cert-sync] no OCSP URI in cert (LE R10+?), writing empty placeholder"
-      : > "$OUT"
-      exit 0
-    fi
+- name: Install OCSP response (ocserv auto-reloads on file change)
+  ansible.builtin.copy:
+    src: /tmp/vpn-cert-sync.ocsp
+    dest: "{{ vpn_certs_dir }}/ocsp-response.der"
+    mode: "0644"
+    remote_src: true
 
-    awk '/-----BEGIN CERTIFICATE-----/{c++} c==2{print} /-----END CERTIFICATE-----/ && c==2{exit}' \
-      "$CERT" > /tmp/vpn-ocsp-issuer.pem
-
-    if openssl ocsp \
-        -issuer /tmp/vpn-ocsp-issuer.pem \
-        -cert "$CERT" \
-        -url "$OCSP_URL" \
-        -respout "$OUT" \
-        -no_nonce \
-        -timeout 10; then
-      echo "[cert-sync] OCSP response fetched from $OCSP_URL"
-    else
-      echo "[cert-sync] OCSP fetch failed, writing empty placeholder"
-      : > "$OUT"
-    fi
-    rm -f /tmp/vpn-ocsp-issuer.pem
-  changed_when: true
+- name: Remove temp OCSP file
+  ansible.builtin.file:
+    path: /tmp/vpn-cert-sync.ocsp
+    state: absent
