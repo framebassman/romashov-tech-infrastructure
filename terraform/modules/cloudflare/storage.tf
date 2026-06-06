@@ -74,9 +74,9 @@ data "external" "slack_grafana_bot_token" {
 
 # ── D1 Databases ─────────────────────────────────────────────────────────────
 
-resource "cloudflare_d1_database" "romashov_tech_status_incidents" {
+resource "cloudflare_d1_database" "romashov_tech" {
   account_id = var.account_id
-  name       = "romashov-tech-status-incidents"
+  name       = "romashov-tech"
   read_replication = {
     mode = "disabled"
   }
