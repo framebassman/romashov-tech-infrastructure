@@ -1,5 +1,14 @@
 # romashov-tech-infrastructure
 
+## Workflow
+
+1. User gives a task → Claude proposes a plan
+2. User asks questions → Claude revises until no questions remain
+3. Claude opens a PR — never pushes directly to master
+4. User reviews the PR; merge happens together
+
+Skip plan step only for trivial single-file changes (typo, one-liner).
+
 Orchestration repo. No application code, no docker-compose files. Two halves:
 
 - `ansible/` — deploy / backup / restore playbooks + roles. Inventory in `hosts.yml`.
