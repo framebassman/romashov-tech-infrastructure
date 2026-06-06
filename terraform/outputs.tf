@@ -12,3 +12,8 @@ output "public_status_page_url" {
   description = "Public URL of the VPN status page in Grafana Cloud (replaces monitoring.romashov.tech/status/vpn)."
   value       = module.grafana_monitoring.public_status_page_url
 }
+
+output "d1_romashov_tech_database_id" {
+  description = "UUID новой D1 базы romashov-tech — подставить в wrangler.toml после копирования данных"
+  value       = module.cloudflare.d1_romashov_tech_database_id
+}
