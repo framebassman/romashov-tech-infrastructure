@@ -81,3 +81,11 @@ resource "cloudflare_d1_database" "romashov_tech_status_incidents" {
     mode = "disabled"
   }
 }
+
+resource "cloudflare_d1_database" "romashov_tech" {
+  account_id = var.account_id
+  name       = "romashov-tech"
+  read_replication = {
+    mode = "disabled"
+  }
+}
