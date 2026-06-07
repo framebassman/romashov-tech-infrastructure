@@ -4,7 +4,6 @@
 
 # roles
 roles/ansible-role-docker
-roles/docker-plugin-loki
 
 #tmp
 *x-ui.db
