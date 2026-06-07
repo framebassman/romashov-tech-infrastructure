@@ -4,24 +4,9 @@
     apt_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
     filebeat_version: 7.10.2
     filebeat_create_config: false
-  vars:
-    docker_edition: ce
-    docker_packages:
-      - "docker-{{ docker_edition }}"
-      - "docker-{{ docker_edition }}-cli"
-      - "docker-{{ docker_edition }}-rootless-extras"
-      - "containerd.io"
-      - docker-buildx-plugin
-      - python3-docker
   roles:
   - basic
   - create-users
   - ansible-role-docker
+  - loki-docker-driver
   # - filebeat
-  post_tasks:
-    - name: Install Loki Docker logging driver plugin
-      become: true
-      community.docker.docker_plugin:
-        plugin_name: grafana/loki-docker-driver:latest
-        alias: loki
-        state: present

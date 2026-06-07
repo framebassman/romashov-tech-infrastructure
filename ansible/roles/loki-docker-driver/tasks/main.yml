@@ -1,0 +1,13 @@
+---
+- name: Check if Loki Docker logging driver is installed
+  ansible.builtin.command: docker plugin inspect loki
+  register: loki_check
+  failed_when: false
+  changed_when: false
+
+- name: Install Loki Docker logging driver
+  become: true
+  ansible.builtin.command: >
+    docker plugin install grafana/loki-docker-driver:{{ loki_driver_version }}
+    --alias loki --grant-all-permissions
+  when: loki_check.rc != 0
