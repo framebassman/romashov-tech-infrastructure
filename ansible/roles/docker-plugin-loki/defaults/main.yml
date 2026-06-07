@@ -1,4 +1,0 @@
----
-docker_loki_version: latest
-docker_loki_image: grafana/loki-docker-driver
-docker_loki_docker_unit: docker
