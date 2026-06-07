@@ -1,0 +1,7 @@
+---
+- name: Install Loki Docker logging driver plugin
+  become: true
+  community.docker.docker_plugin:
+    plugin_name: "grafana/loki-docker-driver:{{ loki_driver_version }}"
+    alias: loki
+    state: present

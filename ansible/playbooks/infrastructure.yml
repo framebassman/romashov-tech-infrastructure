@@ -8,4 +8,5 @@
   - basic
   - create-users
   - ansible-role-docker
+  - loki-docker-driver
   # - filebeat

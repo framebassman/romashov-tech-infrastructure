@@ -1,8 +1,8 @@
 name: Deploy infrastructure to production
 on:
-  pull_request:
+  push:
     branches:
-      - 'master'
+      - master
 jobs:
   apply-terraform-modules:
     runs-on: ubuntu-24.04

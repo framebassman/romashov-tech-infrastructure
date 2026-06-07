@@ -3,7 +3,7 @@
 .venv
 
 # roles
-roles/ansible-role-*
+roles/ansible-role-docker
 
 #tmp
 *x-ui.db
