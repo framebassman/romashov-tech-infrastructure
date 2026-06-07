@@ -1,10 +1,4 @@
 ---
-- name: Install python3-docker
-  become: true
-  ansible.builtin.package:
-    name: python3-docker
-    state: present
-
 - name: Install Loki Docker logging driver plugin
   become: true
   community.docker.docker_plugin:
