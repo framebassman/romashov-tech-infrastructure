@@ -1,0 +1,15 @@
+---
+# One-time teardown: stops and removes the mtproxy container on the old host
+# (node1.romashov.tech, 206.168.215.160) after migration to ge.romashov.tech.
+# Run manually once the new deployment on ge is verified:
+#   ansible-playbook -i hosts.yml playbooks/teardown-mtproxy-node1.yml
+- hosts: "206.168.215.160"
+  become: true
+  become_user: d.romashov
+  vars:
+    project_path: "/home/d.romashov/romashov-tech"
+  tasks:
+    - name: Stop mtproxy on node1
+      command:
+        chdir: "{{ project_path }}"
+        cmd: make stop-prod-mtproxy
