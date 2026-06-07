@@ -1,0 +1,9 @@
+---
+- name: Check status quo
+  loki_info:
+    name: "{{ _docker_loki_alias }}"
+  register: _loki_plugin
+
+- name: Debug
+  debug:
+    var: _loki_plugin

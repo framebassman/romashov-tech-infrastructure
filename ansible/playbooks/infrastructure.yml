@@ -8,13 +8,5 @@
   - basic
   - create-users
   - ansible-role-docker
+  - docker-plugin-loki
   # - filebeat
-  post_tasks:
-    - name: Install Loki Docker logging driver plugin
-      become: true
-      community.docker.docker_plugin:
-        plugin_name: grafana/loki-docker-driver:latest
-        alias: loki
-        state: present
-        plugin_options:
-          LOG_LEVEL: "warn"

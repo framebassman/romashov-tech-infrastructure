@@ -1,0 +1,59 @@
+---
+- name: Prepare
+  hosts: all
+  pre_tasks:
+    - name: Update yum
+      command: yum makecache
+      args:
+        warn: false
+    - name: Install test dependencies
+      yum:
+        name:
+          - curl
+          - jq
+          - python-pip
+    - name: Pre-install a docker requirement (workaround for python2 and docker=4.4.4)
+      pip:
+        name: websocket-client
+        version: "<1"
+  tasks:
+    - include_role:
+        name: atosatto.docker-swarm-base
+      vars:
+        docker_daemon_config:
+          storage-driver: vfs
+        docker_py_package_version: 4.4.4
+        docker_service_override: |
+          [Service]
+          ExecStart=
+          ExecStart=/usr/bin/dockerd -H unix://
+        skip_docker_py: False
+        skip_docker_compose: True
+        skip_group: True
+    - import_role:
+        name: ansible-docker-plugin-loki
+      vars:
+        docker_loki_version: v1.2.0
+    # TODO: should this be done different?
+    - include_role:
+        name: atosatto.docker-swarm
+      vars:
+        docker_daemon_config:
+          storage-driver: vfs
+          log-driver: loki
+          log-opts:
+            loki-url: "http://127.0.0.1"
+            loki-batch-size: "400"
+        skip_cli: True
+        skip_containerd: True
+        skip_docker_compose: True
+        skip_docker_py: True
+        skip_group: True
+        skip_swarm: True
+  post_tasks:
+    - name: Start service which sends logs
+      docker_swarm_service:
+        name: random-logger
+        image: chentex/random-logger:latest
+        restart_config:
+          condition: any

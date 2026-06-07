@@ -1,6 +1,8 @@
 ---
 roles:
   - src: https://github.com/geerlingguy/ansible-role-docker
+  - src: https://github.com/hostwithquantum/ansible-docker-plugin-loki
+    name: docker-plugin-loki
 
 collections:
   - name: amazon.aws
