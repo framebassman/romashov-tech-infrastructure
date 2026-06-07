@@ -93,6 +93,15 @@ resource "cloudflare_dns_record" "a_node4" {
   ttl     = 900
 }
 
+resource "cloudflare_dns_record" "a_ge" {
+  zone_id = local.zone_id
+  name    = "ge"
+  type    = "A"
+  content = "91.239.206.123"
+  proxied = false
+  ttl     = 900
+}
+
 resource "cloudflare_dns_record" "a_out_3x" {
   zone_id = local.zone_id
   name    = "out.3x"
