@@ -97,7 +97,7 @@ resource "cloudflare_dns_record" "a_out_3x" {
   zone_id = local.zone_id
   name    = "out.3x"
   type    = "A"
-  content = "91.239.206.123"
+  content = "206.168.215.160"
   proxied = false
   ttl     = 900
 }
