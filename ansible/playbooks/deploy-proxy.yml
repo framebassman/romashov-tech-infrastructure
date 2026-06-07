@@ -19,5 +19,15 @@
         name: cert-sync
         tasks_from: upload.yml
       when: acme_json.stat.exists and (acme_json.stat.size | default(0) | int) > 2
+    - name: Check if Loki Docker logging driver plugin is installed
+      become_user: root
+      ansible.builtin.command: docker plugin inspect loki
+      register: loki_plugin_check
+      failed_when: false
+      changed_when: false
+    - name: Install Loki Docker logging driver plugin
+      become_user: root
+      ansible.builtin.command: docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+      when: loki_plugin_check.rc != 0
   roles:
   - romashov-tech-deployment
