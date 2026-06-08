@@ -142,7 +142,7 @@ resource "cloudflare_dns_record" "a_v2_tg" {
   zone_id = local.zone_id
   name    = "v2.tg"
   type    = "A"
-  content = "206.168.215.160"
+  content = "91.239.206.123"
   proxied = false
   ttl     = 900
 }
