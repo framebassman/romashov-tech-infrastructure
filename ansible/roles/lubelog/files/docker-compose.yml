@@ -1,6 +1,6 @@
 services:
   lubelog:
-    image: hargata/lubelog:latest
+    image: ghcr.io/hargata/lubelog:v1.6.7
     container_name: lubelog
     ports:
       - "8000:8080"

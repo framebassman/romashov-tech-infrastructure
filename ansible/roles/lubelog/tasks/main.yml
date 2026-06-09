@@ -18,11 +18,7 @@
     mode: '0600'
   no_log: true
 
-- name: Login to GHCR
-  ansible.builtin.shell: echo "{{ ghcr_token }}" | docker login ghcr.io -u "{{ ghcr_username }}" --password-stdin
-  no_log: true
-
-- name: Pull latest lubelog image and start container
+- name: Pull lubelog image and start container
   ansible.builtin.shell: docker compose pull && docker compose up -d
   args:
     chdir: /opt/lubelog
