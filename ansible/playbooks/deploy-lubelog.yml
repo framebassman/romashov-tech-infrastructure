@@ -1,0 +1,6 @@
+---
+- hosts: georgia
+  become: true
+  become_user: d.romashov
+  roles:
+    - lubelog

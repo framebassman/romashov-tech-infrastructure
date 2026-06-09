@@ -86,6 +86,39 @@ resource "aiven_pg_user" "mtproxy_user" {
   pg_allow_replication = false
 }
 
+resource "aiven_pg_database" "lubelog" {
+  project       = aiven_pg.this.project
+  service_name  = aiven_pg.this.service_name
+  database_name = "lubelog_db"
+}
+
+resource "aiven_pg_user" "lubelog_user" {
+  project              = aiven_pg.this.project
+  service_name         = aiven_pg.this.service_name
+  username             = "lubelog-user"
+  password             = var.pg_lubelog_user_password
+  pg_allow_replication = false
+}
+
+resource "null_resource" "lubelog_grants" {
+  depends_on = [
+    aiven_pg_database.lubelog,
+    aiven_pg_user.lubelog_user,
+  ]
+  triggers = {
+    db   = aiven_pg_database.lubelog.database_name
+    user = aiven_pg_user.lubelog_user.username
+  }
+  provisioner "local-exec" {
+    environment = {
+      PGCONN_POSTGRES = replace(aiven_pg.this.service_uri, "defaultdb", "postgres")
+      PGCONN_LUBELOG  = replace(aiven_pg.this.service_uri, "defaultdb", "lubelog_db")
+    }
+    command     = "psql \"$PGCONN_POSTGRES\" -v ON_ERROR_STOP=1 -c 'GRANT CONNECT, CREATE ON DATABASE \"lubelog_db\" TO \"lubelog-user\";' && psql \"$PGCONN_LUBELOG\" -v ON_ERROR_STOP=1 -c 'GRANT USAGE, CREATE ON SCHEMA public TO \"lubelog-user\";'"
+    interpreter = ["bash", "-c"]
+  }
+}
+
 # Права пользователя mtproxy-production на БД mtproxy-production (CONNECT + CREATE на БД и схему public).
 # Выполняется через psql под avnadmin (service_uri), т.к. Aiven не даёт выдать права через Terraform provider.
 resource "null_resource" "mtproxy_grants" {

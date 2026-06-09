@@ -1,0 +1,27 @@
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - ansible/roles/lubelog/**
+      - ansible/playbooks/deploy-lubelog.yml
+      - .github/workflows/lubelog-deploy.yml
+  workflow_dispatch:
+
+name: lubelog-deploy
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Deploy lubelog
+        uses: dawidd6/action-ansible-playbook@v9
+        with:
+          directory: ./ansible
+          playbook: ./playbooks/deploy-lubelog.yml
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          requirements: requirements.yml
+          options: |
+            --extra-vars "lubelog_db_url=${{ secrets.LUBELOG_DB_URL }}"

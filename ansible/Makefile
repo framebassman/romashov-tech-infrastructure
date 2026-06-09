@@ -27,6 +27,11 @@ deploy-3x-ui:
 	make requirements
 	ansible-playbook playbooks/deploy-3x-ui.yml
 
+deploy-lubelog:
+	make requirements
+	ansible-playbook playbooks/deploy-lubelog.yml \
+		--extra-vars "lubelog_db_url=$${LUBELOG_DB_URL}"
+
 3x-ui-metrics-firewall:
 	make requirements
 	ansible-playbook playbooks/3x-ui-metrics-firewall.yml

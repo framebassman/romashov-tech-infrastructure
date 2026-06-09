@@ -60,6 +60,7 @@ module "aiven" {
   pg_outline_user_password   = data.external.pg_outline_user_password.result.value
   pg_vault_user_password     = data.external.pg_vault_user_password.result.value
   pg_mtproxy_user_password   = data.external.pg_mtproxy_user_password.result.value
+  pg_lubelog_user_password   = data.external.pg_lubelog_user_password.result.value
 }
 
 # OCI: аутентификация из переменных (terraform.tfvars или backend.conf)
@@ -119,6 +120,13 @@ data "external" "pg_mtproxy_user_password" {
   program = [
     "bash", "-c",
     "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_mtproxy_user_password\" | jq -Rc '{value: .}'"
+  ]
+}
+
+data "external" "pg_lubelog_user_password" {
+  program = [
+    "bash", "-c",
+    "curl -sf -H \"Authorization: Bearer $CLOUDFLARE_API_TOKEN\" \"${local.kv_base_url}/pg_lubelog_user_password\" | jq -Rc '{value: .}'"
   ]
 }
 
