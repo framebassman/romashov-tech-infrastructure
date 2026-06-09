@@ -1,0 +1,15 @@
+services:
+  lubelog:
+    image: ghcr.io/hargata/lubelog:latest
+    container_name: lubelog
+    ports:
+      - "8000:8080"
+    env_file:
+      - .env
+    volumes:
+      - lubelog_data:/App/data
+    restart: unless-stopped
+
+volumes:
+  lubelog_data:
+    name: lubelog_data

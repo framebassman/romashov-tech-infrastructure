@@ -27,6 +27,16 @@ resource "cloudflare_dns_record" "a_dash" {
   ttl     = 1
 }
 
+# lube.romashov.tech → node2 (RU). Traefik reverse-proxies to ge node (91.239.206.123:18333).
+resource "cloudflare_dns_record" "a_lube" {
+  zone_id = local.zone_id
+  name    = "lube"
+  type    = "A"
+  content = "109.172.90.19"
+  proxied = false
+  ttl     = 1
+}
+
 resource "cloudflare_dns_record" "a_in_3x" {
   zone_id = local.zone_id
   name    = "in.3x"

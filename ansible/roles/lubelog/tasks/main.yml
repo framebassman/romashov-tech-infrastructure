@@ -1,0 +1,30 @@
+---
+- name: Create lubelog working directory
+  ansible.builtin.file:
+    path: /home/d.romashov/lubelog
+    state: directory
+    owner: d.romashov
+    mode: '0750'
+
+- name: Copy docker-compose file
+  ansible.builtin.copy:
+    src: docker-compose.yml
+    dest: /home/d.romashov/lubelog/docker-compose.yml
+    owner: d.romashov
+    mode: '0640'
+
+- name: Write .env file
+  ansible.builtin.copy:
+    content: "ConnectionStrings__LubeLoggerContext={{ lubelog_db_url }}\n"
+    dest: /home/d.romashov/lubelog/.env
+    owner: d.romashov
+    mode: '0600'
+  no_log: true
+
+- name: Pull latest lubelog image and start container
+  ansible.builtin.shell: docker compose -f /home/d.romashov/lubelog/docker-compose.yml pull && docker compose -f /home/d.romashov/lubelog/docker-compose.yml up -d
+  args:
+    chdir: /home/d.romashov/lubelog
+
+- name: Remove unused docker images
+  ansible.builtin.shell: docker image prune --all --force
