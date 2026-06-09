@@ -18,10 +18,18 @@
     mode: '0600'
   no_log: true
 
+- name: Log in to GHCR
+  ansible.builtin.shell: >
+    echo "{{ ghcr_token }}" | docker login ghcr.io --username "{{ ghcr_username }}" --password-stdin
+  no_log: true
+
 - name: Pull lubelog image and start container
   ansible.builtin.shell: docker compose pull && docker compose up -d
   args:
     chdir: /opt/lubelog
+
+- name: Log out of GHCR
+  ansible.builtin.shell: docker logout ghcr.io
 
 - name: Remove unused docker images
   ansible.builtin.shell: docker image prune --all --force
