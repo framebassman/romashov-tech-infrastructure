@@ -25,3 +25,5 @@ jobs:
           requirements: requirements.yml
           options: |
             --extra-vars "lubelog_db_url=${{ secrets.LUBELOG_DB_URL }}"
+            --extra-vars "ghcr_token=${{ secrets.GHCR_TOKEN }}"
+            --extra-vars "ghcr_username=${{ secrets.GHCR_USERNAME }}"

@@ -30,7 +30,9 @@ deploy-3x-ui:
 deploy-lubelog:
 	make requirements
 	ansible-playbook playbooks/deploy-lubelog.yml \
-		--extra-vars "lubelog_db_url=$${LUBELOG_DB_URL}"
+		--extra-vars "lubelog_db_url=$${LUBELOG_DB_URL}" \
+		--extra-vars "ghcr_token=$${GHCR_TOKEN}" \
+		--extra-vars "ghcr_username=$${GHCR_USERNAME}"
 
 3x-ui-metrics-firewall:
 	make requirements
