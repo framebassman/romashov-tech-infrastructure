@@ -1,14 +1,14 @@
 ---
 - name: Create lubelog working directory
   ansible.builtin.file:
-    path: /opt/lubelog
+    path: /home/d.romashov/lubelog
     state: directory
     mode: '0750'
 
 - name: Copy docker-compose file
   ansible.builtin.copy:
     src: docker-compose.yml
-    dest: /opt/lubelog/docker-compose.yml
+    dest: /home/d.romashov/lubelog/docker-compose.yml
     mode: '0640'
 
 - name: Fetch lubelog DB URL from Cloudflare KV
@@ -24,7 +24,7 @@
 - name: Write .env file
   ansible.builtin.copy:
     content: "ConnectionStrings__LubeLoggerContext={{ lubelog_db_url_result.content }}\n"
-    dest: /opt/lubelog/.env
+    dest: /home/d.romashov/lubelog/.env
     mode: '0600'
   no_log: true
 
@@ -35,7 +35,7 @@
 
 - name: Deploy lubelog
   community.docker.docker_compose_v2:
-    project_src: /opt/lubelog
+    project_src: /home/d.romashov/lubelog
     pull: always
     recreate: always
     state: present

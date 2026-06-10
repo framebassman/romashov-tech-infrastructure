@@ -8,7 +8,14 @@ services:
       - .env
     volumes:
       - lubelog_data:/App/data
+    networks:
+      - romashovtech_default
     restart: unless-stopped
 
 volumes:
   lubelog_data:
+
+networks:
+  romashovtech_default:
+    name: romashovtech_default
+    external: true
