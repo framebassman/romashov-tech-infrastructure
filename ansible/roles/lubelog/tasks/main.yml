@@ -28,10 +28,14 @@
     mode: '0600'
   no_log: true
 
-- name: Pull lubelog image and start container
-  ansible.builtin.shell: docker compose pull && docker compose up -d
-  args:
-    chdir: /opt/lubelog
+- name: Deploy lubelog
+  community.docker.docker_compose_v2:
+    project_src: /opt/lubelog
+    pull: always
+    state: present
 
 - name: Remove unused docker images
-  ansible.builtin.shell: docker image prune --all --force
+  community.docker.docker_prune:
+    images: true
+    images_filters:
+      dangling: false
