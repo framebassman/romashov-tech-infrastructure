@@ -3,12 +3,19 @@ services:
     image: ghcr.io/hargata/lubelogger:v1.6.7
     container_name: lubelog
     ports:
-      - 8000:8080
+      - 8080:8080
     env_file:
       - .env
     volumes:
       - lubelog_data:/App/data
+    networks:
+      - romashovtech_default
     restart: unless-stopped
 
 volumes:
   lubelog_data:
+
+networks:
+  romashovtech_default:
+    name: romashovtech_default
+    external: true
