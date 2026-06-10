@@ -96,8 +96,11 @@ resource "aiven_pg_user" "lubelog_user" {
   project              = aiven_pg.this.project
   service_name         = aiven_pg.this.service_name
   username             = "lubelog-user"
-  password             = var.pg_lubelog_user_password
   pg_allow_replication = false
+
+  lifecycle {
+    ignore_changes = [password]
+  }
 }
 
 resource "null_resource" "lubelog_grants" {
