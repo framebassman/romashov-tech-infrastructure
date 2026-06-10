@@ -13,7 +13,7 @@
 
 - name: Fetch lubelog DB URL from Cloudflare KV
   ansible.builtin.uri:
-    url: "https://api.cloudflare.com/client/v4/accounts/4faf2c3b5dd13669f97dd976498ad56a/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values/lubelog_db_url"
+    url: "https://api.cloudflare.com/client/v4/accounts/4faf2c3b5dd13669f97dd976498ad56a/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values/LUBELOG_DB_URL"
     headers:
       Authorization: "Bearer {{ cloudflare_api_token }}"
     return_content: true
