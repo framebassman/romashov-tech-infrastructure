@@ -38,7 +38,3 @@ variable "pg_mtproxy_user_password" {
   type        = string
 }
 
-variable "pg_lubelog_user_password" {
-  description = "Password for Postgres lubelog-user"
-  type        = string
-}

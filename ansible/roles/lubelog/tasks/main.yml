@@ -11,9 +11,19 @@
     dest: /opt/lubelog/docker-compose.yml
     mode: '0640'
 
+- name: Fetch lubelog DB URL from Cloudflare KV
+  ansible.builtin.uri:
+    url: "https://api.cloudflare.com/client/v4/accounts/4faf2c3b5dd13669f97dd976498ad56a/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values/lubelog_db_url"
+    headers:
+      Authorization: "Bearer {{ cloudflare_api_token }}"
+    return_content: true
+    status_code: 200
+  register: lubelog_db_url_result
+  no_log: true
+
 - name: Write .env file
   ansible.builtin.copy:
-    content: "ConnectionStrings__LubeLoggerContext={{ lubelog_db_url }}\n"
+    content: "ConnectionStrings__LubeLoggerContext={{ lubelog_db_url_result.content }}\n"
     dest: /opt/lubelog/.env
     mode: '0600'
   no_log: true

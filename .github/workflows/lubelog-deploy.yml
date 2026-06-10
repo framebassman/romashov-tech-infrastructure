@@ -24,4 +24,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           requirements: requirements.yml
           options: |
-            --extra-vars "lubelog_db_url=${{ secrets.LUBELOG_DB_URL }}"
+            --extra-vars "cloudflare_api_token=${{ secrets.CLOUDFLARE_API_TOKEN }}"
