@@ -28,10 +28,16 @@
     mode: '0600'
   no_log: true
 
+- name: Remove any existing lubelog container
+  community.docker.docker_container:
+    name: lubelog
+    state: absent
+
 - name: Deploy lubelog
   community.docker.docker_compose_v2:
     project_src: /opt/lubelog
     pull: always
+    recreate: always
     state: present
 
 - name: Remove unused docker images
