@@ -67,6 +67,15 @@ resource "cloudflare_dns_record" "a_status" {
   ttl     = 1
 }
 
+resource "cloudflare_dns_record" "a_ge" {
+  zone_id = local.zone_id
+  name    = "ge"
+  type    = "A"
+  content = "91.239.206.123"
+  proxied = false
+  ttl     = 900
+}
+
 resource "cloudflare_dns_record" "a_node1" {
   zone_id = local.zone_id
   name    = "node1"
