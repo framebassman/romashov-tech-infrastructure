@@ -71,7 +71,7 @@ resource "cloudflare_dns_record" "a_ge" {
   zone_id = local.zone_id
   name    = "ge"
   type    = "A"
-  content = "91.239.206.123"
+  content = "188.120.235.164"
   proxied = false
   ttl     = 900
 }
