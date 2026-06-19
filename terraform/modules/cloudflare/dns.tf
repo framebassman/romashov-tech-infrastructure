@@ -112,6 +112,15 @@ resource "cloudflare_dns_record" "a_node4" {
   ttl     = 900
 }
 
+resource "cloudflare_dns_record" "a_ge" {
+  zone_id = local.zone_id
+  name    = "ge"
+  type    = "A"
+  content = "91.239.206.123"
+  proxied = false
+  ttl     = 900
+}
+
 resource "cloudflare_dns_record" "a_out_3x" {
   zone_id = local.zone_id
   name    = "out.3x"
@@ -152,7 +161,7 @@ resource "cloudflare_dns_record" "a_v2_tg" {
   zone_id = local.zone_id
   name    = "v2.tg"
   type    = "A"
-  content = "206.168.215.160"
+  content = "91.239.206.123"
   proxied = false
   ttl     = 900
 }
