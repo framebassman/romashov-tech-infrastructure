@@ -1,4 +1,12 @@
 ---
+- name: Install Python requests for community.docker modules
+  become: true
+  ansible.builtin.apt:
+    name:
+      - python3-requests
+    state: present
+    update_cache: yes
+
 - name: Install Loki Docker logging driver plugin
   become: true
   community.docker.docker_plugin:
