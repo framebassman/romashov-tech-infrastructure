@@ -5,7 +5,7 @@ services:
     env_file:
       - .env
     volumes:
-      - lubelog_data:/App/data
+      - ./data:/App/data
     networks:
       - romashovtech_default
     labels:
@@ -17,9 +17,6 @@ services:
       - traefik.http.services.lubelog.loadbalancer.server.port=8080
       - traefik.http.services.lubelog.loadbalancer.serverstransport=lubelogger@file
     restart: unless-stopped
-
-volumes:
-  lubelog_data:
 
 networks:
   romashovtech_default:
