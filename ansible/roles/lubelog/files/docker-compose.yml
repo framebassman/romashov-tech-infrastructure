@@ -2,14 +2,21 @@ services:
   lubelog:
     image: ghcr.io/hargata/lubelogger:v1.6.7
     container_name: lubelog
-    ports:
-      - 8080:8080
     env_file:
       - .env
     volumes:
       - lubelog_data:/App/data
     networks:
       - romashovtech_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lubelog.rule=Host(`lube.romashov.tech`)
+      - traefik.http.routers.lubelog.entrypoints=https-point
+      - traefik.http.routers.lubelog.tls=true
+      - traefik.http.routers.lubelog.middlewares=dashboard-auth@docker
+      - traefik.http.services.lubelog.loadbalancer.server.port=8080
+      - traefik.http.serverstransports.lubelogger.forwardingtimeouts.responseheadertimeout=300s
+      - traefik.http.services.lubelog.loadbalancer.serverstransport=lubelogger@docker
     restart: unless-stopped
 
 volumes:
