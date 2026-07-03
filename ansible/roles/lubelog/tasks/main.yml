@@ -5,12 +5,6 @@
     state: directory
     mode: '0750'
 
-- name: Create lubelog data directory
-  ansible.builtin.file:
-    path: /home/d.romashov/lubelog/data
-    state: directory
-    mode: '0750'
-
 - name: Copy docker-compose file
   ansible.builtin.copy:
     src: docker-compose.yml
