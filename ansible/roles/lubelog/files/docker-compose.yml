@@ -15,8 +15,7 @@ services:
       - traefik.http.routers.lubelog.tls=true
       - traefik.http.routers.lubelog.middlewares=dashboard-auth@docker
       - traefik.http.services.lubelog.loadbalancer.server.port=8080
-      - traefik.http.serverstransports.lubelogger.forwardingtimeouts.responseheadertimeout=300s
-      - traefik.http.services.lubelog.loadbalancer.serverstransport=lubelogger@docker
+      - traefik.http.services.lubelog.loadbalancer.serverstransport=lubelogger@file
     restart: unless-stopped
 
 volumes:
