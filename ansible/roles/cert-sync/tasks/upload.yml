@@ -96,6 +96,7 @@
     secret_key: "{{ CLOUDFLARE_R2_API_ACCESS_SECRET }}"
     region: us-east-1
     permission: []
+  ignore_errors: true
 
 - name: Remove temp OCSP file
   ansible.builtin.file:
