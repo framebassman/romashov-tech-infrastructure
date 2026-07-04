@@ -27,7 +27,7 @@ services:
       - romashovtech_default
     labels:
       - traefik.enable=true
-      - traefik.http.routers.lubelog-mcp.rule=Host(`mcp.lube.romashov.tech`)
+      - traefik.http.routers.lubelog-mcp.rule=Host(`lube-mcp.romashov.tech`)
       - traefik.http.routers.lubelog-mcp.entrypoints=https-point
       - traefik.http.routers.lubelog-mcp.tls=true
       - traefik.http.routers.lubelog-mcp.middlewares=dashboard-auth@docker
