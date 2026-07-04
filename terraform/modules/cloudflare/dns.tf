@@ -37,6 +37,16 @@ resource "cloudflare_dns_record" "a_lube" {
   ttl     = 1
 }
 
+# mcp.lube.romashov.tech → node2 (RU). Traefik routes to lubelog_mcp sidecar.
+resource "cloudflare_dns_record" "a_mcp_lube" {
+  zone_id = local.zone_id
+  name    = "mcp.lube"
+  type    = "A"
+  content = "109.172.90.19"
+  proxied = false
+  ttl     = 1
+}
+
 resource "cloudflare_dns_record" "a_in_3x" {
   zone_id = local.zone_id
   name    = "in.3x"

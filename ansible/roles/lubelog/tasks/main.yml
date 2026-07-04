@@ -33,6 +33,11 @@
     name: lubelog
     state: absent
 
+- name: Remove any existing lubelog_mcp container
+  community.docker.docker_container:
+    name: lubelog_mcp
+    state: absent
+
 - name: Deploy lubelog
   community.docker.docker_compose_v2:
     project_src: /home/d.romashov/lubelog

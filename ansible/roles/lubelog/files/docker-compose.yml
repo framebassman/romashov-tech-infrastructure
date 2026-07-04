@@ -18,6 +18,24 @@ services:
       - traefik.http.services.lubelog.loadbalancer.serverstransport=lubelogger@file
     restart: unless-stopped
 
+  lubelog_mcp:
+    image: ghcr.io/hargata/lubelogger_mcp:latest
+    container_name: lubelog_mcp
+    environment:
+      - LUBELOG_INSTANCE=http://lubelog:8080
+    networks:
+      - romashovtech_default
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lubelog-mcp.rule=Host(`mcp.lube.romashov.tech`)
+      - traefik.http.routers.lubelog-mcp.entrypoints=https-point
+      - traefik.http.routers.lubelog-mcp.tls=true
+      - traefik.http.routers.lubelog-mcp.middlewares=dashboard-auth@docker
+      - traefik.http.services.lubelog-mcp.loadbalancer.server.port=8080
+    depends_on:
+      - lubelog
+    restart: unless-stopped
+
 networks:
   romashovtech_default:
     name: romashovtech_default
