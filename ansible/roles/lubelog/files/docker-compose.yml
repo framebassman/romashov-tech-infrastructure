@@ -21,8 +21,6 @@ services:
   lubelog_mcp:
     image: ghcr.io/hargata/lubelogger_mcp:latest
     container_name: lubelog_mcp
-    env_file:
-      - .env
     environment:
       - LUBELOG_INSTANCE=http://lubelog:8080
     networks:
