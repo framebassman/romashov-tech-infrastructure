@@ -21,9 +21,32 @@
   register: lubelog_db_url_result
   no_log: true
 
+- name: Fetch lubelog user from Cloudflare KV
+  ansible.builtin.uri:
+    url: "https://api.cloudflare.com/client/v4/accounts/4faf2c3b5dd13669f97dd976498ad56a/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values/LUBELOG_USER"
+    headers:
+      Authorization: "Bearer {{ cloudflare_api_token }}"
+    return_content: true
+    status_code: 200
+  register: lubelog_user_result
+  no_log: true
+
+- name: Fetch lubelog password from Cloudflare KV
+  ansible.builtin.uri:
+    url: "https://api.cloudflare.com/client/v4/accounts/4faf2c3b5dd13669f97dd976498ad56a/storage/kv/namespaces/f0b474a7601c4e16bf88e3e290db5602/values/LUBELOG_PASS"
+    headers:
+      Authorization: "Bearer {{ cloudflare_api_token }}"
+    return_content: true
+    status_code: 200
+  register: lubelog_pass_result
+  no_log: true
+
 - name: Write .env file
   ansible.builtin.copy:
-    content: "ConnectionStrings__LubeLoggerContext={{ lubelog_db_url_result.content }}\n"
+    content: |
+      ConnectionStrings__LubeLoggerContext={{ lubelog_db_url_result.content }}
+      LUBELOG_USER={{ lubelog_user_result.content }}
+      LUBELOG_PASS={{ lubelog_pass_result.content }}
     dest: /home/d.romashov/lubelog/.env
     mode: '0600'
   no_log: true
@@ -31,6 +54,11 @@
 - name: Remove any existing lubelog container
   community.docker.docker_container:
     name: lubelog
+    state: absent
+
+- name: Remove any existing lubelog_mcp container
+  community.docker.docker_container:
+    name: lubelog_mcp
     state: absent
 
 - name: Deploy lubelog
