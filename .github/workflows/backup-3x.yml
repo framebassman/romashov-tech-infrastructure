@@ -2,8 +2,6 @@ name: Backup 3x config
 
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 3 * * *'  # 03:00 UTC daily
 
 jobs:
   run-ansible-playbooks:
