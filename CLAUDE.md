@@ -59,21 +59,24 @@ Every host has `fqdn` set in inventory — roles assume it.
 
 ## CI workflow caveats (`.github/workflows/deploy.yml`)
 
-Triggered on **every `pull_request`** against master:
-1. `apply-terraform-modules` — runs `terraform apply -auto-approve` against
-   real OCI / Aiven state. Will mutate cloud state on every PR, even
-   docs-only PRs.
-2. `apply-infrastructure-playbook` — provisioning basics.
-3. `apply-firewall-playbook` + `apply-3xui-playbook` (in parallel after #2)
-   — both auto-deploy to real hosts. The 3x-ui playbook will recreate
-   `3xui_app` containers (~10s downtime per host).
+Triggered on **push to `master`** (i.e. after merge, not on PR open):
+1. `apply-terraform-modules` — runs `terraform plan` then `terraform apply -auto-approve`
+   against real OCI / Aiven / Cloudflare / VDSina state.
+2. `apply-infrastructure-playbook` — runs `infrastructure.yml` (basic provisioning)
+   and `vpn-firewall.yml` against all VPN hosts. Depends on job 1 succeeding.
 
 Implications:
-- A docs-only PR still runs terraform apply. Watch for side effects.
-- To suppress autodeploy on a given PR: `gh run cancel <id>` after opening.
-- The `apply-terraform-modules` job uses
-  `terraform apply -auto-approve`, so any drift between the branch and
-  master will be applied on PR open.
+- A docs-only PR still runs terraform apply after merge. Watch for side effects.
+- `terraform apply -auto-approve` runs against the merged code. Any resources added
+  to `.tf` files that are **not yet imported** into state will be **created** by CI.
+- **New terraform resources that already exist** (e.g. a pre-provisioned VM) must be
+  imported into state **after merge, before the next push** triggers CI again:
+  ```
+  cd terraform && make import-<module>   # fill in IDs first
+  # then push an empty commit to re-trigger CI:
+  git commit --allow-empty -m "chore: retrigger CI after import"
+  git push
+  ```
 
 ## GitHub deploy keys on hosts
 
