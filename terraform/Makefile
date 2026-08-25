@@ -68,11 +68,11 @@ import:
 # Server ID:   GET https://userapi.vdsina.com/v1/server
 import-vdsina-com:
 	@echo "--- VDSina.com ---"
-	-terraform import module.vdsina_com.vdsina_ssh_key.all_together <FILL_IN_SSH_KEY_ID>
-	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_komplukter <FILL_IN_SSH_KEY_ID>
-	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_workstation <FILL_IN_SSH_KEY_ID>
-	-terraform import module.vdsina_com.vdsina_ssh_key.github_komplukter <FILL_IN_SSH_KEY_ID>
-	-terraform import module.vdsina_com.vdsina_server.node1 <FILL_IN_SERVER_ID>
+	-terraform import module.vdsina_com.vdsina_ssh_key.pixel-biometric 367
+	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_komplukter 366
+	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_workstation 369
+	-terraform import module.vdsina_com.vdsina_ssh_key.pixel 368
+	-terraform import module.vdsina_com.vdsina_server.out_3x_romashov_tech 820792
 	@echo "--- Aiven ---"
 	-terraform import module.aiven_postgres.aiven_pg.this romashov-tech/romashov-tech-postgres
 	-terraform import module.aiven_postgres.aiven_pg_database.postgres romashov-tech/romashov-tech-postgres/postgres
