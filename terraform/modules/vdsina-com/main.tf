@@ -24,7 +24,7 @@ resource "vdsina_ssh_key" "pixel-biometric" {
 }
 
 # Servers — template is immutable after creation; ssh_key not tracked by API
-resource "vdsina_server" "node1" {
+resource "vdsina_server" "out_3x_romashov_tech" {
   name        = "out_3x_romashov_tech"
   host        = "out.3x.romashov.tech"
   datacenter  = 1   # Netherlands — verify after import via: curl -H "Authorization: <token>" https://userapi.vdsina.com/v1/datacenter
