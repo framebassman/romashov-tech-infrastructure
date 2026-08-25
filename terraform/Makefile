@@ -63,16 +63,6 @@ import:
 	-terraform import module.vdsina_ru.vdsina_ssh_key.github_komplukter 29257
 	-terraform import module.vdsina_ru.vdsina_server.node2 3017377
 	$(MAKE) import-vdsina-com
-
-# SSH key IDs: GET https://userapi.vdsina.com/v1/ssh-key
-# Server ID:   GET https://userapi.vdsina.com/v1/server
-import-vdsina-com:
-	@echo "--- VDSina.com ---"
-	-terraform import module.vdsina_com.vdsina_ssh_key.pixel-biometric 367
-	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_komplukter 366
-	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_workstation 369
-	-terraform import module.vdsina_com.vdsina_ssh_key.pixel 368
-	-terraform import module.vdsina_com.vdsina_server.out_3x_romashov_tech 820792
 	@echo "--- Aiven ---"
 	-terraform import module.aiven_postgres.aiven_pg.this romashov-tech/romashov-tech-postgres
 	-terraform import module.aiven_postgres.aiven_pg_database.postgres romashov-tech/romashov-tech-postgres/postgres
@@ -88,6 +78,16 @@ import-vdsina-com:
 	-terraform import module.aiven_postgres.aiven_pg_user.mtproxy_user romashov-tech/romashov-tech-postgres/mtproxy-production
 	@echo "--- OCI VM ---"
 	terraform import 'module.oci_vm.oci_core_instance.this' 'ocid1.instance.oc1.eu-stockholm-1.anqxeljryneafxycu45rfs7efir6uaw6cmpydknxiw25ph35fil254kkejgq'
+
+# SSH key IDs: GET https://userapi.vdsina.com/v1/ssh-key
+# Server ID:   GET https://userapi.vdsina.com/v1/server
+import-vdsina-com:
+	@echo "--- VDSina.com ---"
+	-terraform import module.vdsina_com.vdsina_ssh_key.pixel-biometric 367
+	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_komplukter 366
+	-terraform import module.vdsina_com.vdsina_ssh_key.romashov_workstation 369
+	-terraform import module.vdsina_com.vdsina_ssh_key.pixel 368
+	-terraform import module.vdsina_com.vdsina_server.out_3x_romashov_tech 820792
 
 import-oci:
 	terraform import 'module.oci_vm.oci_core_instance.this' 'ocid1.instance.oc1.eu-stockholm-1.anqxeljryneafxycu45rfs7efir6uaw6cmpydknxiw25ph35fil254kkejgq'
