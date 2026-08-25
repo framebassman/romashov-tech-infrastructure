@@ -149,11 +149,14 @@ resource "cloudflare_dns_record" "a_russia" {
   ttl     = 1
 }
 
+# tg.romashov.tech → node2 (RU). Traefik relays mtproxy's raw traffic to
+# node1.romashov.tech:443, since RU users have no direct route to node1.
+# See romashov-tech services/proxy/config/dynamic/mtproxy.yml.
 resource "cloudflare_dns_record" "a_tg" {
   zone_id = local.zone_id
   name    = "tg"
   type    = "A"
-  content = "185.121.233.152"
+  content = "109.172.90.19"
   proxied = false
   ttl     = 900
 }
