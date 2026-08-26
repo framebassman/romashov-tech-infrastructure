@@ -23,6 +23,10 @@ deploy-mtproxy:
 	make requirements
 	ansible-playbook playbooks/deploy-mtproxy.yml
 
+deploy-mtproxy-node2:
+	make requirements
+	ansible-playbook playbooks/deploy-mtproxy-node2.yml
+
 deploy-3x-ui:
 	make requirements
 	ansible-playbook playbooks/deploy-3x-ui.yml

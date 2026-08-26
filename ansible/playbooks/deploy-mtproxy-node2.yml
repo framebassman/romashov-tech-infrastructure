@@ -1,0 +1,9 @@
+---
+- hosts: russian
+  become: true
+  become_user: d.romashov
+  vars:
+    application: mtproxy-node2
+    project_path: "/home/d.romashov/romashov-tech"
+  roles:
+    - romashov-tech-deployment
