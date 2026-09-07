@@ -63,6 +63,19 @@
       state: present
     become: yes
 
+  - name: Ensure CLOUDFLARE_DNS_API_TOKEN exists locally
+    fail:
+      msg: "CLOUDFLARE_DNS_API_TOKEN is not set"
+    when: CLOUDFLARE_DNS_API_TOKEN is not defined or CLOUDFLARE_DNS_API_TOKEN == ''
+
+  - name: Populate CLOUDFLARE_DNS_API_TOKEN environment variable
+    lineinfile:
+      path: "/etc/environment"
+      regexp: "^CLOUDFLARE_DNS_API_TOKEN="
+      line: "CLOUDFLARE_DNS_API_TOKEN={{ CLOUDFLARE_DNS_API_TOKEN }}"
+      state: present
+    become: yes
+
   - name: Install AWS SDK dependencies
     ansible.builtin.apt:
       name:

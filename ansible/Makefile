@@ -4,7 +4,8 @@ requirements:
 infrastructure:
 	make requirements
 	ansible-playbook playbooks/infrastructure.yml \
-		--extra-vars CLOUDFLARE_API_TOKEN=$${CLOUDFLARE_API_TOKEN}
+		--extra-vars CLOUDFLARE_API_TOKEN=$${CLOUDFLARE_API_TOKEN} \
+		--extra-vars CLOUDFLARE_DNS_API_TOKEN=$${CLOUDFLARE_DNS_API_TOKEN}
 
 deploy-vpn:
 	make requirements
